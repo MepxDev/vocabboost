@@ -21,12 +21,33 @@ h1 {
   margin: 8px 0;
   padding: 12px;
   border-radius: 6px;
-  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border: 1px solid #ccc;
+}
+
+#wordList li span {
+  cursor: pointer;
+  flex-grow: 1;
 }
 
 #wordList li:hover {
   background: #e8f0fe;
+}
+
+.delete-btn {
+  margin-left: 10px;
+  padding: 4px 8px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #c0392b;
 }
 
 #meaning {
