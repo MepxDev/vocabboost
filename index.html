@@ -3,55 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Learner</title>
+    <title>Word Master | Vocabulary Builder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="app-container">
-        <header>
-            <h1>Word Learner</h1>
-            <p>Expand your vocabulary one word at a time</p>
+        <div class="theme-toggle">
+            <i class="fas fa-moon" id="theme-icon"></i>
+        </div>
+        
+        <header class="app-header">
+            <div class="logo">
+                <i class="fas fa-language"></i>
+                <h1>Word Master</h1>
+            </div>
+            <p class="tagline">Elevate your vocabulary to mastery</p>
         </header>
 
-        <main>
-            <div class="controls">
-                <input type="text" id="word-input" placeholder="Enter a new word">
-                <input type="text" id="definition-input" placeholder="Enter its definition">
-                <button id="add-word-btn">Add Word</button>
+        <div class="stats-bar">
+            <div class="stat-card">
+                <i class="fas fa-book"></i>
+                <span id="word-count">0</span>
+                <small>Words</small>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-check-circle"></i>
+                <span id="mastered-count">0</span>
+                <small>Mastered</small>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-fire"></i>
+                <span id="streak-count">0</span>
+                <small>Day Streak</small>
+            </div>
+        </div>
+
+        <main class="app-main">
+            <div class="card add-word-card">
+                <h2><i class="fas fa-plus-circle"></i> Add New Word</h2>
+                <div class="form-group">
+                    <input type="text" id="word-input" placeholder="Word" class="glow-input">
+                    <i class="fas fa-font"></i>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="definition-input" placeholder="Definition" class="glow-input">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="form-group">
+                    <select id="category-input" class="glow-input">
+                        <option value="general">General</option>
+                        <option value="academic">Academic</option>
+                        <option value="business">Business</option>
+                        <option value="technical">Technical</option>
+                    </select>
+                    <i class="fas fa-tag"></i>
+                </div>
+                <button id="add-word-btn" class="glow-button">
+                    <i class="fas fa-plus"></i> Add Word
+                </button>
             </div>
 
-            <div class="filter-controls">
-                <input type="text" id="search-input" placeholder="Search words...">
-                <select id="sort-select">
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="alphabetical">A-Z</option>
-                    <option value="reverse-alphabetical">Z-A</option>
-                </select>
+            <div class="card filter-card">
+                <div class="search-group">
+                    <input type="text" id="search-input" placeholder="Search words..." class="glow-input">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="filter-options">
+                    <select id="sort-select" class="glow-input">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="alphabetical">A-Z</option>
+                        <option value="reverse-alphabetical">Z-A</option>
+                        <option value="mastery">Mastery Level</option>
+                    </select>
+                    <select id="category-filter" class="glow-input">
+                        <option value="all">All Categories</option>
+                        <option value="general">General</option>
+                        <option value="academic">Academic</option>
+                        <option value="business">Business</option>
+                        <option value="technical">Technical</option>
+                    </select>
+                </div>
             </div>
 
             <div class="word-list" id="word-list">
                 <!-- Words will be added here dynamically -->
+                <div class="empty-state">
+                    <i class="fas fa-book-open"></i>
+                    <h3>Your word collection is empty</h3>
+                    <p>Start by adding your first word!</p>
+                </div>
             </div>
 
-            <div class="practice-section">
-                <h2>Practice Mode</h2>
-                <button id="practice-btn">Start Practice</button>
+            <div class="practice-section card">
+                <div class="practice-header">
+                    <h2><i class="fas fa-brain"></i> Practice Session</h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+                <button id="practice-btn" class="glow-button pulse">
+                    <i class="fas fa-play"></i> Start Practice
+                </button>
                 <div id="practice-container" class="hidden">
-                    <div id="practice-question"></div>
-                    <input type="text" id="practice-answer" class="hidden">
-                    <button id="check-answer-btn" class="hidden">Check Answer</button>
-                    <div id="practice-feedback"></div>
-                    <button id="next-question-btn" class="hidden">Next Question</button>
+                    <div id="practice-question" class="question-box"></div>
+                    <div class="answer-group">
+                        <input type="text" id="practice-answer" class="glow-input hidden" placeholder="Your answer...">
+                        <button id="check-answer-btn" class="glow-button hidden">
+                            <i class="fas fa-check"></i> Check
+                        </button>
+                    </div>
+                    <div id="practice-feedback" class="feedback-box"></div>
+                    <button id="next-question-btn" class="glow-button hidden">
+                        <i class="fas fa-arrow-right"></i> Next Question
+                    </button>
                 </div>
             </div>
         </main>
 
-        <footer>
-            <p>Words learned: <span id="word-count">0</span></p>
+        <footer class="app-footer">
+            <p>Word Master v2.0 | Build your vocabulary daily!</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
         </footer>
     </div>
 
+    <div class="confetti-container" id="confetti-container"></div>
     <script src="main.js"></script>
 </body>
 </html>
