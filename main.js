@@ -1,6 +1,6 @@
 let words = JSON.parse(localStorage.getItem("wordList")) || [
-  { word: "Objection", meaning: "A lawyer's protest against something said or done." },
-  { word: "Evidence", meaning: "Proof presented in court to support facts." }
+  { id: crypto.randomUUID(), word: "Objection", meaning: "A lawyer's protest against something said or done." },
+  { id: crypto.randomUUID(), word: "Evidence", meaning: "Proof presented in court to support facts." }
 ];
 
 const wordListEl = document.getElementById("wordList");
@@ -16,12 +16,12 @@ function saveToStorage() {
 
 function displayWords() {
   wordListEl.innerHTML = "";
-  words.forEach((item, index) => {
+  words.forEach((item) => {
     const li = document.createElement("li");
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.dataset.index = index;
+    checkbox.dataset.id = item.id;
 
     const wordSpan = document.createElement("span");
     wordSpan.textContent = item.word;
@@ -36,18 +36,10 @@ function displayWords() {
 }
 
 deleteSelectedBtn.addEventListener("click", () => {
-  const checkboxes = document.querySelectorAll('#wordList input[type="checkbox"]');
-  const toDelete = [];
+  const checkboxes = document.querySelectorAll('#wordList input[type="checkbox"]:checked');
+  const idsToDelete = Array.from(checkboxes).map(cb => cb.dataset.id);
 
-  checkboxes.forEach(cb => {
-    if (cb.checked) {
-      toDelete.push(parseInt(cb.dataset.index));
-    }
-  });
-
-  // Remove from the end to avoid index shifting
-  toDelete.sort((a, b) => b - a).forEach(i => words.splice(i, 1));
-
+  words = words.filter(word => !idsToDelete.includes(word.id));
   saveToStorage();
   displayWords();
   meaningEl.textContent = "Click on a word to see its meaning here.";
@@ -58,7 +50,7 @@ form.addEventListener("submit", (e) => {
   const newWord = newWordInput.value.trim();
   const newMeaning = newMeaningInput.value.trim();
   if (newWord && newMeaning) {
-    words.push({ word: newWord, meaning: newMeaning });
+    words.push({ id: crypto.randomUUID(), word: newWord, meaning: newMeaning });
     saveToStorage();
     displayWords();
     newWordInput.value = "";
