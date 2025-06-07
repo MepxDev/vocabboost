@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Master | Vocabulary Builder</title>
+    <title>Word Master | Vocabulary & Grammar Builder</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -18,7 +18,7 @@
                 <i class="fas fa-language"></i>
                 <h1>Word Master</h1>
             </div>
-            <p class="tagline">Elevate your vocabulary to mastery</p>
+            <p class="tagline">Master vocabulary and grammar through practice</p>
         </header>
 
         <div class="stats-bar">
@@ -88,7 +88,6 @@
             </div>
 
             <div class="word-list" id="word-list">
-                <!-- Words will be added here dynamically -->
                 <div class="empty-state">
                     <i class="fas fa-book-open"></i>
                     <h3>Your word collection is empty</h3>
@@ -122,27 +121,28 @@
                 </div>
             </div>
 
-            <!-- Grammar Practice Section -->
+            <!-- Word Order Practice Section -->
             <div class="practice-section card">
                 <div class="practice-header">
-                    <h2><i class="fas fa-grammar"></i> Grammar Practice</h2>
+                    <h2><i class="fas fa-sort-alpha-down"></i> Word Order Practice</h2>
                     <div class="progress-bar">
-                        <div class="progress-fill" id="grammar-progress-fill"></div>
+                        <div class="progress-fill" id="wordorder-progress-fill"></div>
                     </div>
                 </div>
-                <button id="grammar-practice-btn" class="glow-button pulse">
+                <button id="wordorder-practice-btn" class="glow-button pulse">
                     <i class="fas fa-play"></i> Start Practice
                 </button>
-                <div id="grammar-container" class="hidden">
-                    <div id="grammar-question" class="question-box"></div>
+                <div id="wordorder-container" class="hidden">
+                    <div id="wordorder-question" class="question-box"></div>
+                    <div class="scrambled-words" id="scrambled-words"></div>
                     <div class="answer-group">
-                        <textarea id="grammar-answer" class="practice-input" placeholder="Type your corrected sentence here..."></textarea>
-                        <button id="check-grammar-btn" class="glow-button">
-                            <i class="fas fa-check"></i> Check Correction
+                        <div class="word-bank" id="word-bank"></div>
+                        <button id="check-wordorder-btn" class="glow-button">
+                            <i class="fas fa-check"></i> Check Order
                         </button>
                     </div>
-                    <div id="grammar-feedback" class="feedback-box"></div>
-                    <button id="next-grammar-btn" class="glow-button hidden">
+                    <div id="wordorder-feedback" class="feedback-box"></div>
+                    <button id="next-wordorder-btn" class="glow-button hidden">
                         <i class="fas fa-arrow-right"></i> Next Question
                     </button>
                 </div>
@@ -150,7 +150,7 @@
         </main>
 
         <footer class="app-footer">
-            <p>Word Master v2.0 | Build your vocabulary daily!</p>
+            <p>Word Master v2.0 | Build your language skills daily!</p>
             <div class="social-links">
                 <a href="#"><i class="fab fa-twitter"></i></a>
                 <a href="#"><i class="fab fa-instagram"></i></a>
