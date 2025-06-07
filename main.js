@@ -55,4 +55,3 @@ form.addEventListener("submit", (e) => {
 
 window.addEventListener("beforeunload", saveToStorage);
 displayWords();
-
