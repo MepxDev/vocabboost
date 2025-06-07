@@ -54,6 +54,9 @@ document.addEventListener('DOMContentLoaded', function() {
     practiceBtn.addEventListener('click', togglePracticeMode);
     checkAnswerBtn.addEventListener('click', checkAnswer);
     nextQuestionBtn.addEventListener('click', nextQuestion);
+    practiceAnswer.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') checkAnswer();
+    });
 
     // Functions
     function loadTheme() {
@@ -152,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         let filteredWords = words.filter(word => 
             (word.word.toLowerCase().includes(searchTerm) || 
-             word.definition.toLowerCase().includes(searchTerm)) &&
+            word.definition.toLowerCase().includes(searchTerm)) &&
             (categoryFilterValue === 'all' || word.category === categoryFilterValue)
         );
 
@@ -329,6 +332,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         practiceAnswer.classList.remove('hidden');
         checkAnswerBtn.classList.remove('hidden');
+        nextQuestionBtn.classList.add('hidden');
         practiceAnswer.value = '';
         practiceAnswer.focus();
     }
@@ -362,6 +366,7 @@ document.addEventListener('DOMContentLoaded', function() {
             practiceFeedback.innerHTML = `
                 <i class="fas fa-check-circle"></i>
                 <div>Correct! Well done!</div>
+                <div class="highlight">"${questionType === 'word' ? currentWord.definition : currentWord.word}"</div>
             `;
             practiceFeedback.className = 'feedback-box correct';
             createConfetti();
@@ -434,82 +439,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
 });
-
-// Add confetti animation to CSS
-const style = document.createElement('style');
-style.textContent = `
-@keyframes fall {
-    0% {
-        opacity: 1;
-        transform: translateY(-100px) rotate(0deg);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(100vh) rotate(360deg);
-    }
-}
-
-.notification {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 15px 25px;
-    border-radius: 5px;
-    color: white;
-    font-weight: 600;
-    opacity: 0;
-    transition: all 0.3s ease;
-    z-index: 1000;
-}
-
-.notification.show {
-    opacity: 1;
-    bottom: 30px;
-}
-
-.notification.success {
-    background-color: #00b894;
-    box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);
-}
-
-.notification.error {
-    background-color: #d63031;
-    box-shadow: 0 5px 15px rgba(214, 48, 49, 0.4);
-}
-
-.highlight {
-    color: var(--primary-color);
-    font-weight: 700;
-    margin-top: 10px;
-}
-
-.category {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    background-color: var(--secondary-color);
-    color: white;
-}
-
-.category.general {
-    background-color: #6c5ce7;
-}
-
-.category.academic {
-    background-color: #0984e3;
-}
-
-.category.business {
-    background-color: #00b894;
-}
-
-.category.technical {
-    background-color: #e17055;
-}
-`;
-document.head.appendChild(style);
