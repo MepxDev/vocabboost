@@ -1,6 +1,6 @@
 let words = JSON.parse(localStorage.getItem("wordList")) || [
-  { id: crypto.randomUUID(), word: "Objection", meaning: "A lawyer's protest against something said or done." },
-  { id: crypto.randomUUID(), word: "Evidence", meaning: "Proof presented in court to support facts." }
+  { id: crypto.randomUUID(), word: "Objection", meaning: "A lawyer’s protest in court." },
+  { id: crypto.randomUUID(), word: "Evidence", meaning: "Proof used in court." }
 ];
 
 const wordListEl = document.getElementById("wordList");
@@ -8,7 +8,6 @@ const meaningEl = document.getElementById("meaning");
 const form = document.getElementById("addWordForm");
 const newWordInput = document.getElementById("newWord");
 const newMeaningInput = document.getElementById("newMeaning");
-const deleteSelectedBtn = document.getElementById("deleteSelected");
 
 function saveToStorage() {
   localStorage.setItem("wordList", JSON.stringify(words));
@@ -19,45 +18,41 @@ function displayWords() {
   words.forEach((item) => {
     const li = document.createElement("li");
 
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.dataset.id = item.id;
-
     const wordSpan = document.createElement("span");
     wordSpan.textContent = item.word;
     wordSpan.addEventListener("click", () => {
-      meaningEl.textContent = item.meaning;
+      meaningEl.textContent = `📖 ${item.meaning}`;
     });
 
-    li.appendChild(checkbox);
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "❌";
+    deleteBtn.classList.add("delete-btn");
+    deleteBtn.addEventListener("click", () => {
+      words = words.filter(w => w.id !== item.id);
+      saveToStorage();
+      displayWords();
+      meaningEl.textContent = "💡 Click a word to see its meaning";
+    });
+
     li.appendChild(wordSpan);
+    li.appendChild(deleteBtn);
     wordListEl.appendChild(li);
   });
 }
 
-deleteSelectedBtn.addEventListener("click", () => {
-  const checkboxes = document.querySelectorAll('#wordList input[type="checkbox"]:checked');
-  const idsToDelete = Array.from(checkboxes).map(cb => cb.dataset.id);
-
-  words = words.filter(word => !idsToDelete.includes(word.id));
-  saveToStorage();
-  displayWords();
-  meaningEl.textContent = "Click on a word to see its meaning here.";
-});
-
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-  const newWord = newWordInput.value.trim();
-  const newMeaning = newMeaningInput.value.trim();
-  if (newWord && newMeaning) {
-    words.push({ id: crypto.randomUUID(), word: newWord, meaning: newMeaning });
+  const word = newWordInput.value.trim();
+  const meaning = newMeaningInput.value.trim();
+  if (word && meaning) {
+    words.push({ id: crypto.randomUUID(), word, meaning });
     saveToStorage();
     displayWords();
-    newWordInput.value = "";
-    newMeaningInput.value = "";
-    meaningEl.textContent = "Click on a word to see its meaning here.";
+    form.reset();
+    meaningEl.textContent = "💡 Click a word to see its meaning";
   }
 });
 
 window.addEventListener("beforeunload", saveToStorage);
 displayWords();
+
