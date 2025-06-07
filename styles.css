@@ -1,14 +1,23 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', sans-serif;
+  background: #121212;
+  color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
   max-width: 600px;
-  margin: 30px auto;
-  padding: 10px;
-  background: #f0f0f0;
+  margin: 40px auto;
+  padding: 20px;
+  background: #1e1e1e;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #000;
 }
 
 h1 {
   text-align: center;
-  color: #2c3e50;
+  margin-bottom: 20px;
 }
 
 #wordList {
@@ -17,73 +26,68 @@ h1 {
 }
 
 #wordList li {
-  background: white;
-  margin: 8px 0;
-  padding: 10px;
-  border-radius: 6px;
+  background: #2c2c2c;
+  margin: 10px 0;
+  padding: 12px;
+  border-radius: 8px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  border: 1px solid #ccc;
 }
 
 #wordList li span {
+  cursor: pointer;
   flex-grow: 1;
-  margin-left: 10px;
-  cursor: pointer;
 }
 
-#wordList li:hover {
-  background: #e8f0fe;
-}
-
-#deleteSelected {
-  margin-top: 10px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  background: #e74c3c;
-  color: white;
+.delete-btn {
+  background: transparent;
+  color: #ff4d4d;
   border: none;
-  border-radius: 4px;
+  font-size: 1.2rem;
   cursor: pointer;
+  transition: transform 0.2s;
 }
 
-#deleteSelected:hover {
-  background: #c0392b;
+.delete-btn:hover {
+  transform: scale(1.2);
 }
 
 #meaning {
-  background: white;
-  padding: 15px;
   margin-top: 20px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  min-height: 60px;
+  padding: 15px;
+  background: #292929;
+  border-radius: 8px;
+  min-height: 50px;
+  font-size: 1.1rem;
 }
 
 form {
-  margin-top: 25px;
-  background: white;
-  padding: 15px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
 }
 
 form input,
 form textarea {
-  width: 100%;
-  margin-bottom: 12px;
-  padding: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #333;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 6px;
   font-size: 1rem;
 }
 
 form button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  cursor: pointer;
   background: #3498db;
   color: white;
   border: none;
-  border-radius: 4px;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
 form button:hover {
