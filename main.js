@@ -20,18 +20,109 @@ document.addEventListener('DOMContentLoaded', function() {
     const checkAnswerBtn = document.getElementById('check-answer-btn');
     const practiceFeedback = document.getElementById('practice-feedback');
     const nextQuestionBtn = document.getElementById('next-question-btn');
+    const grammarPracticeBtn = document.getElementById('grammar-practice-btn');
+    const grammarContainer = document.getElementById('grammar-container');
+    const grammarQuestion = document.getElementById('grammar-question');
+    const grammarAnswer = document.getElementById('grammar-answer');
+    const checkGrammarBtn = document.getElementById('check-grammar-btn');
+    const grammarFeedback = document.getElementById('grammar-feedback');
+    const nextGrammarBtn = document.getElementById('next-grammar-btn');
     const progressFill = document.getElementById('progress-fill');
+    const grammarProgressFill = document.getElementById('grammar-progress-fill');
     const confettiContainer = document.getElementById('confetti-container');
 
     // State
     let words = JSON.parse(localStorage.getItem('words')) || [];
-    let practiceMode = false;
+    let vocabPracticeMode = false;
+    let grammarPracticeMode = false;
     let currentQuestionIndex = 0;
     let questionType = '';
-    let correctAnswersInSession = 0;
-    let totalQuestionsInSession = 0;
+    let vocabCorrectAnswers = 0;
+    let vocabTotalQuestions = 0;
+    let grammarCorrectAnswers = 0;
+    let grammarTotalQuestions = 0;
     let lastPracticeDate = localStorage.getItem('lastPracticeDate') || null;
     let currentStreak = parseInt(localStorage.getItem('currentStreak')) || 0;
+    let currentGrammarQuestion = null;
+
+    // Grammar error patterns (can be expanded)
+    const grammarErrors = [
+        {
+            error: "their",
+            correction: "there",
+            example: "Their going to the park later."
+        },
+        {
+            error: "your",
+            correction: "you're",
+            example: "Your going to love this!"
+        },
+        {
+            error: "it's",
+            correction: "its",
+            example: "The dog wagged it's tail."
+        },
+        {
+            error: "could of",
+            correction: "could have",
+            example: "I could of gone to the party."
+        },
+        {
+            error: "less",
+            correction: "fewer",
+            example: "We have less options now."
+        },
+        {
+            error: "then",
+            correction: "than",
+            example: "She is taller then him."
+        },
+        {
+            error: "affect",
+            correction: "effect",
+            example: "The medicine had a good affect."
+        },
+        {
+            error: "me",
+            correction: "I",
+            example: "Her and me went to the store."
+        },
+        {
+            error: "was",
+            correction: "were",
+            example: "If I was you, I'd go."
+        },
+        {
+            error: "this",
+            correction: "these",
+            example: "This kind of problems are hard."
+        },
+        {
+            error: "alot",
+            correction: "a lot",
+            example: "I like pizza alot."
+        },
+        {
+            error: "should of",
+            correction: "should have",
+            example: "You should of seen that movie."
+        },
+        {
+            error: "its'",
+            correction: "its",
+            example: "The cat licked its' paw."
+        },
+        {
+            error: "to",
+            correction: "too",
+            example: "This is to much for me."
+        },
+        {
+            error: "loose",
+            correction: "lose",
+            example: "I don't want to loose the game."
+        }
+    ];
 
     // Initialize
     checkStreak();
@@ -51,11 +142,19 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.addEventListener('input', renderWordList);
     sortSelect.addEventListener('change', renderWordList);
     categoryFilter.addEventListener('change', renderWordList);
-    practiceBtn.addEventListener('click', togglePracticeMode);
-    checkAnswerBtn.addEventListener('click', checkAnswer);
-    nextQuestionBtn.addEventListener('click', nextQuestion);
+    practiceBtn.addEventListener('click', toggleVocabPractice);
+    checkAnswerBtn.addEventListener('click', checkVocabAnswer);
+    nextQuestionBtn.addEventListener('click', nextVocabQuestion);
     practiceAnswer.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') checkAnswer();
+        if (e.key === 'Enter') checkVocabAnswer();
+    });
+    grammarPracticeBtn.addEventListener('click', toggleGrammarPractice);
+    checkGrammarBtn.addEventListener('click', checkGrammarAnswer);
+    nextGrammarBtn.addEventListener('click', nextGrammarQuestion);
+    grammarAnswer.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && e.ctrlKey) {
+            checkGrammarAnswer();
+        }
     });
 
     // Functions
@@ -259,55 +358,85 @@ document.addEventListener('DOMContentLoaded', function() {
         streakCount.textContent = currentStreak;
     }
 
-    function togglePracticeMode() {
-        practiceMode = !practiceMode;
+    function toggleVocabPractice() {
+        vocabPracticeMode = !vocabPracticeMode;
         
-        if (practiceMode) {
+        if (vocabPracticeMode) {
             if (words.length === 0) {
                 showNotification('Please add some words first!', 'error');
-                practiceMode = false;
+                vocabPracticeMode = false;
                 return;
             }
             
             checkStreak();
             practiceBtn.innerHTML = '<i class="fas fa-stop"></i> End Practice';
             practiceContainer.classList.remove('hidden');
-            correctAnswersInSession = 0;
-            totalQuestionsInSession = 0;
-            startPractice();
+            vocabCorrectAnswers = 0;
+            vocabTotalQuestions = 0;
+            startVocabPractice();
         } else {
-            endPracticeSession();
+            endVocabPractice();
         }
     }
 
-    function startPractice() {
-        currentQuestionIndex = 0;
-        nextQuestion();
+    function toggleGrammarPractice() {
+        grammarPracticeMode = !grammarPracticeMode;
+        
+        if (grammarPracticeMode) {
+            checkStreak();
+            grammarPracticeBtn.innerHTML = '<i class="fas fa-stop"></i> End Practice';
+            grammarContainer.classList.remove('hidden');
+            grammarCorrectAnswers = 0;
+            grammarTotalQuestions = 0;
+            startGrammarPractice();
+        } else {
+            endGrammarPractice();
+        }
     }
 
-    function endPracticeSession() {
+    function startVocabPractice() {
+        currentQuestionIndex = 0;
+        nextVocabQuestion();
+    }
+
+    function startGrammarPractice() {
+        nextGrammarQuestion();
+    }
+
+    function endVocabPractice() {
         practiceBtn.innerHTML = '<i class="fas fa-play"></i> Start Practice';
         practiceContainer.classList.add('hidden');
-        resetPracticeUI();
+        resetVocabUI();
         
-        if (totalQuestionsInSession > 0) {
-            const accuracy = Math.round((correctAnswersInSession / totalQuestionsInSession) * 100);
-            showNotification(`Practice session completed! Accuracy: ${accuracy}%`, 'success');
+        if (vocabTotalQuestions > 0) {
+            const accuracy = Math.round((vocabCorrectAnswers / vocabTotalQuestions) * 100);
+            showNotification(`Vocabulary practice completed! Accuracy: ${accuracy}%`, 'success');
         }
     }
 
-    function nextQuestion() {
+    function endGrammarPractice() {
+        grammarPracticeBtn.innerHTML = '<i class="fas fa-play"></i> Start Practice';
+        grammarContainer.classList.add('hidden');
+        resetGrammarUI();
+        
+        if (grammarTotalQuestions > 0) {
+            const accuracy = Math.round((grammarCorrectAnswers / grammarTotalQuestions) * 100);
+            showNotification(`Grammar practice completed! Accuracy: ${accuracy}%`, 'success');
+        }
+    }
+
+    function nextVocabQuestion() {
         if (words.length === 0) {
             practiceFeedback.textContent = 'No words available for practice.';
             return;
         }
 
         // Reset UI for new question
-        resetPracticeUI();
+        resetVocabUI();
 
         // Update progress bar
-        const progress = totalQuestionsInSession > 0 
-            ? Math.min(Math.round((correctAnswersInSession / totalQuestionsInSession) * 100), 100)
+        const progress = vocabTotalQuestions > 0 
+            ? Math.min(Math.round((vocabCorrectAnswers / vocabTotalQuestions) * 100), 100)
             : 0;
         progressFill.style.width = `${progress}%`;
 
@@ -337,7 +466,90 @@ document.addEventListener('DOMContentLoaded', function() {
         practiceAnswer.focus();
     }
 
-    function checkAnswer() {
+    function nextGrammarQuestion() {
+        currentGrammarQuestion = generateGrammarQuestion();
+        grammarQuestion.innerHTML = `
+            <i class="fas fa-question-circle"></i>
+            <div>Correct this sentence:</div>
+            <div class="highlight">"${currentGrammarQuestion.sentence}"</div>
+        `;
+        
+        // Update progress bar
+        const progress = grammarTotalQuestions > 0 
+            ? Math.min(Math.round((grammarCorrectAnswers / grammarTotalQuestions) * 100), 100)
+            : 0;
+        grammarProgressFill.style.width = `${progress}%`;
+        
+        grammarAnswer.value = '';
+        grammarFeedback.innerHTML = '';
+        grammarFeedback.className = 'feedback-box';
+        nextGrammarBtn.classList.add('hidden');
+        grammarAnswer.focus();
+    }
+
+    function generateGrammarQuestion() {
+        // Select a random error pattern
+        const errorPattern = grammarErrors[Math.floor(Math.random() * grammarErrors.length)];
+        
+        // Sometimes use the example, sometimes generate a new sentence
+        let sentence;
+        if (Math.random() > 0.5) {
+            sentence = errorPattern.example;
+        } else {
+            // Simple sentence generator
+            const subjects = ["The cat", "My friend", "Our teacher", "The computer", "The weather", "Many people"];
+            const verbs = ["is", "was", "looks", "seems", "became", "appears"];
+            const objects = ["very happy", "too big", "quite interesting", "rather cold", "extremely fast", "completely wrong"];
+            const connectors = ["because", "although", "while", "since", "unless"];
+            const secondParts = ["it's fun", "they tried", "we know", "you see", "I agree"];
+            
+            // 50% chance for simple or complex sentence
+            if (Math.random() > 0.5) {
+                sentence = `${subjects[Math.floor(Math.random() * subjects.length)]} ` +
+                           `${verbs[Math.floor(Math.random() * verbs.length)]} ` +
+                           `${objects[Math.floor(Math.random() * objects.length)]}.`;
+            } else {
+                sentence = `${subjects[Math.floor(Math.random() * subjects.length)]} ` +
+                           `${verbs[Math.floor(Math.random() * verbs.length)]} ` +
+                           `${objects[Math.floor(Math.random() * objects.length)]} ` +
+                           `${connectors[Math.floor(Math.random() * connectors.length)]} ` +
+                           `${secondParts[Math.floor(Math.random() * secondParts.length)]}.`;
+            }
+            
+            // Introduce the error
+            sentence = sentence.replace(
+                new RegExp(`\\b${errorPattern.correction}\\b`, 'gi'), 
+                errorPattern.error
+            );
+        }
+        
+        return {
+            sentence,
+            error: errorPattern.error,
+            correction: errorPattern.correction,
+            explanation: `The word "${errorPattern.error}" should be "${errorPattern.correction}" in this context. ${getGrammarExplanation(errorPattern.error, errorPattern.correction)}`
+        };
+    }
+
+    function getGrammarExplanation(error, correction) {
+        const explanations = {
+            "their/there": "Use 'their' for possession (their house) and 'there' for location (over there).",
+            "your/you're": "'Your' shows possession (your book), while 'you're' is short for 'you are'.",
+            "it's/its": "'It's' means 'it is' or 'it has', while 'its' shows possession (its tail).",
+            "could of/could have": "The correct phrase is 'could have' (or 'could've'), not 'could of'.",
+            "less/fewer": "Use 'fewer' for countable items (fewer apples) and 'less' for uncountable (less water).",
+            "then/than": "'Then' relates to time (we ate, then left), 'than' is for comparisons (taller than).",
+            "affect/effect": "'Affect' is usually a verb (to affect change), 'effect' is usually a noun (the effect).",
+            "me/I": "Use 'I' as the subject (I went) and 'me' as the object (with me).",
+            "was/were": "Use 'were' in hypothetical situations (if I were you).",
+            "this/these": "'This' is singular (this book), 'these' is plural (these books)."
+        };
+        
+        const key = `${error}/${correction}`.toLowerCase();
+        return explanations[key] || "";
+    }
+
+    function checkVocabAnswer() {
         const userAnswer = practiceAnswer.value.trim().toLowerCase();
         const currentWord = words[currentQuestionIndex];
         let correctAnswer, isCorrect;
@@ -355,9 +567,9 @@ document.addEventListener('DOMContentLoaded', function() {
         currentWord.lastTested = new Date().toISOString();
         if (isCorrect) {
             currentWord.timesCorrect += 1;
-            correctAnswersInSession++;
+            vocabCorrectAnswers++;
         }
-        totalQuestionsInSession++;
+        vocabTotalQuestions++;
         saveWords();
         updateStats();
 
@@ -384,12 +596,74 @@ document.addEventListener('DOMContentLoaded', function() {
         nextQuestionBtn.classList.remove('hidden');
     }
 
-    function resetPracticeUI() {
+    function checkGrammarAnswer() {
+        const userAnswer = grammarAnswer.value.trim();
+        const correctAnswer = currentGrammarQuestion.sentence.replace(
+            new RegExp(`\\b${currentGrammarQuestion.error}\\b`, 'gi'),
+            currentGrammarQuestion.correction
+        );
+
+        // Basic check - could be enhanced with more sophisticated comparison
+        const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+
+        // Update stats
+        if (isCorrect) {
+            grammarCorrectAnswers++;
+        }
+        grammarTotalQuestions++;
+
+        // Highlight differences
+        let feedbackHTML = '';
+        if (isCorrect) {
+            feedbackHTML = `
+                <i class="fas fa-check-circle"></i>
+                <div>Perfect! Well done!</div>
+                <div class="highlight">"${correctAnswer}"</div>
+            `;
+            grammarFeedback.className = 'feedback-box correct';
+            createConfetti();
+        } else {
+            // Show comparison
+            const originalWithHighlight = currentGrammarQuestion.sentence.replace(
+                new RegExp(`\\b${currentGrammarQuestion.error}\\b`, 'gi'),
+                match => `<span class="grammar-error">${match}</span>`
+            );
+            
+            const correctedWithHighlight = correctAnswer.replace(
+                new RegExp(`\\b${currentGrammarQuestion.correction}\\b`, 'gi'),
+                match => `<span class="grammar-correction">${match}</span>`
+            );
+            
+            feedbackHTML = `
+                <i class="fas fa-times-circle"></i>
+                <div>Here's the correction:</div>
+                <div class="comparison">
+                    <div><strong>Original:</strong> ${originalWithHighlight}</div>
+                    <div><strong>Correct:</strong> ${correctedWithHighlight}</div>
+                </div>
+                <div class="explanation">${currentGrammarQuestion.explanation}</div>
+            `;
+            grammarFeedback.className = 'feedback-box incorrect';
+        }
+
+        grammarFeedback.innerHTML = feedbackHTML;
+        nextGrammarBtn.classList.remove('hidden');
+    }
+
+    function resetVocabUI() {
         practiceFeedback.textContent = '';
         practiceFeedback.className = 'feedback-box';
         practiceAnswer.classList.add('hidden');
         checkAnswerBtn.classList.add('hidden');
         nextQuestionBtn.classList.add('hidden');
+    }
+
+    function resetGrammarUI() {
+        grammarFeedback.textContent = '';
+        grammarFeedback.className = 'feedback-box';
+        grammarAnswer.classList.add('hidden');
+        checkGrammarBtn.classList.add('hidden');
+        nextGrammarBtn.classList.add('hidden');
     }
 
     function createConfetti() {
