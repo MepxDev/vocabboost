@@ -1,27 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Word Learner</title>
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Learner</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>📘 Word Learner</h1>
+    <div class="app-container">
+        <header>
+            <h1>Word Learner</h1>
+            <p>Expand your vocabulary one word at a time</p>
+        </header>
 
-    <ul id="wordList"></ul>
+        <main>
+            <div class="controls">
+                <input type="text" id="word-input" placeholder="Enter a new word">
+                <input type="text" id="definition-input" placeholder="Enter its definition">
+                <button id="add-word-btn">Add Word</button>
+            </div>
 
-    <div id="meaning">💡 Click a word to see its meaning</div>
+            <div class="filter-controls">
+                <input type="text" id="search-input" placeholder="Search words...">
+                <select id="sort-select">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="alphabetical">A-Z</option>
+                    <option value="reverse-alphabetical">Z-A</option>
+                </select>
+            </div>
 
-    <form id="addWordForm">
-      <input type="text" id="newWord" placeholder="New word" required />
-      <textarea id="newMeaning" placeholder="Meaning / explanation" rows="3" required></textarea>
-      <button type="submit">➕ Add Word</button>
-    </form>
-  </div>
+            <div class="word-list" id="word-list">
+                <!-- Words will be added here dynamically -->
+            </div>
 
-  <script src="main.js"></script>
+            <div class="practice-section">
+                <h2>Practice Mode</h2>
+                <button id="practice-btn">Start Practice</button>
+                <div id="practice-container" class="hidden">
+                    <div id="practice-question"></div>
+                    <input type="text" id="practice-answer" class="hidden">
+                    <button id="check-answer-btn" class="hidden">Check Answer</button>
+                    <div id="practice-feedback"></div>
+                    <button id="next-question-btn" class="hidden">Next Question</button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Words learned: <span id="word-count">0</span></p>
+        </footer>
+    </div>
+
+    <script src="main.js"></script>
 </body>
 </html>
-
