@@ -2,24 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Word Learner</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>Word Learner</h1>
+  <div class="container">
+    <h1>📘 Word Learner</h1>
 
-  <ul id="wordList"></ul>
+    <ul id="wordList"></ul>
 
-  <button id="deleteSelected">🗑️ Delete Selected</button>
+    <div id="meaning">💡 Click a word to see its meaning</div>
 
-  <div id="meaning">Click on a word to see its meaning here.</div>
-
-  <form id="addWordForm">
-    <input type="text" id="newWord" placeholder="New word" required />
-    <textarea id="newMeaning" placeholder="Meaning / explanation" rows="3" required></textarea>
-    <button type="submit">Add Word</button>
-  </form>
+    <form id="addWordForm">
+      <input type="text" id="newWord" placeholder="New word" required />
+      <textarea id="newMeaning" placeholder="Meaning / explanation" rows="3" required></textarea>
+      <button type="submit">➕ Add Word</button>
+    </form>
+  </div>
 
   <script src="main.js"></script>
 </body>
