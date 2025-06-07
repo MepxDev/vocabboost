@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Order Grammar Practice</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --text-color: #2d3436;
+            --text-light: #636e72;
+            --background-color: #f5f6fa;
+            --card-color: #ffffff;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --border-radius: 12px;
+            --success-color: #00b894;
+            --error-color: #d63031;
+            --warning-color: #fdcb6e;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #a29bfe;
+            --secondary-color: #6c5ce7;
+            --accent-color: #fd79a8;
+            --text-color: #f5f6fa;
+            --text-light: #b2bec3;
+            --background-color: #2d3436;
+            --card-color: #1e272e;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        .app-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .card {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Difficulty Selector Styles */
+        .difficulty-selector {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .difficulty-selector h3 {
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .difficulty-options {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .difficulty-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .difficulty-btn.active {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .difficulty-btn[data-difficulty="easy"] {
+            background-color: #00b894;
+            color: white;
+        }
+
+        .difficulty-btn[data-difficulty="medium"] {
+            background-color: #fdcb6e;
+            color: #2d3436;
+        }
+
+        .difficulty-btn[data-difficulty="hard"] {
+            background-color: #d63031;
+            color: white;
+        }
+
+        .difficulty-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Word Order Practice Specific Styles */
+        .scrambled-words {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+            min-height: 80px;
+            padding: 15px;
+            background-color: rgba(108, 92, 231, 0.1);
+            border-radius: var(--border-radius);
+            border: 2px dashed var(--primary-color);
+        }
+
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+            min-height: 80px;
+            padding: 15px;
+            background-color: rgba(108, 92, 231, 0.1);
+            border-radius: var(--border-radius);
+        }
+
+        .word-tile {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s ease;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .word-tile:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+
+        .word-tile.placed {
+            background-color: var(--accent-color);
+        }
+
+        .word-tile.correct-position {
+            background-color: var(--success-color);
+        }
+
+        .word-tile.incorrect-position {
+            background-color: var(--error-color);
+        }
+
+        .dragging {
+            opacity: 0.5;
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .syntax-diagram {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: rgba(0, 184, 148, 0.1);
+            border-left: 4px solid var(--success-color);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+
+        .syntax-diagram h4 {
+            margin-bottom: 10px;
+            color: var(--success-color);
+        }
+
+        .practice-button {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .practice-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+        }
+
+        .practice-button:active {
+            transform: translateY(0);
+        }
+
+        .feedback-box {
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin: 25px 0;
+            font-size: 1.2rem;
+            text-align: center;
+            font-weight: 600;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .correct {
+            background-color: rgba(0, 184, 148, 0.1);
+            color: var(--success-color);
+            border-left: 5px solid var(--success-color);
+        }
+
+        .incorrect {
+            background-color: rgba(214, 48, 49, 0.1);
+            color: var(--error-color);
+            border-left: 5px solid var(--error-color);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #dfe6e9;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(108, 92, 231, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="theme-toggle">
+            <i class="fas fa-moon" id="theme-icon"></i>
+        </div>
+        
+        <header>
+            <h1>Word Order Grammar Practice</h1>
+            <p>Improve your English sentence structure skills</p>
+        </header>
+
+        <div class="card">
+            <div class="difficulty-selector">
+                <h3>Select Difficulty:</h3>
+                <div class="difficulty-options">
+                    <button class="difficulty-btn active" data-difficulty="easy">Easy</button>
+                    <button class="difficulty-btn" data-difficulty="medium">Medium</button>
+                    <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+
+            <button id="practice-btn" class="practice-button pulse">
+                <i class="fas fa-play"></i> Start Practice
+            </button>
+
+            <div id="practice-container" class="hidden">
+                <div id="question" class="syntax-diagram"></div>
+                <div class="scrambled-words" id="scrambled-words"></div>
+                <div class="word-bank" id="word-bank"></div>
+                
+                <button id="check-answer-btn" class="practice-button">
+                    <i class="fas fa-check"></i> Check Answer
+                </button>
+                
+                <div id="feedback" class="feedback-box"></div>
+                
+                <button id="next-question-btn" class="practice-button hidden">
+                    <i class="fas fa-arrow-right"></i> Next Question
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Word Order Practice State
+        let wordOrderPracticeMode = false;
+        let wordOrderDifficulty = 'easy';
+        let wordOrderCorrectAnswers = 0;
+        let wordOrderTotalQuestions = 0;
+        let currentWordOrderQuestion = null;
+        let draggedWord = null;
+
+        // Word Order Patterns by Difficulty
+        const wordOrderPatterns = {
+            easy: [],
+            medium: [],
+            hard: []
+        };
+
+        // Initialize with 150+ sentences for each difficulty level
+        function initializeSentences() {
+            // Easy sentences (Simple present, SVO)
+            for (let i = 0; i < 150; i++) {
+                wordOrderPatterns.easy.push({
+                    structure: "Subject + Verb + Object",
+                    example: generateEasySentence()
+                });
+            }
+
+            // Medium sentences (Various tenses, modals)
+            for (let i = 0; i < 150; i++) {
+                wordOrderPatterns.medium.push({
+                    structure: getRandomMediumStructure(),
+                    example: generateMediumSentence()
+                });
+            }
+
+            // Hard sentences (Complex structures)
+            for (let i = 0; i < 150; i++) {
+                wordOrderPatterns.hard.push({
+                    structure: getRandomHardStructure(),
+                    example: generateHardSentence()
+                });
+            }
+        }
+
+        // Sentence generators
+        function generateEasySentence() {
+            const subjects = ["The cat", "A dog", "My friend", "Our teacher", "The baby", "Birds", "Fish", 
+                            "Children", "Students", "The sun", "The moon", "My mother", "His father", 
+                            "The computer", "The book", "The car", "The tree", "The flower", "The bird", 
+                            "The student", "The doctor", "The teacher", "The man", "The woman"];
+            
+            const verbs = ["eats", "likes", "sees", "has", "wants", "needs", "loves", "hates", 
+                          "enjoys", "plays", "reads", "writes", "drinks", "cooks", "cleans", 
+                          "washes", "buys", "sells", "opens", "closes", "runs", "walks", "talks"];
+            
+            const objects = ["an apple", "the ball", "a book", "milk", "toys", "a car", "a house", 
+                            "a pen", "a pencil", "a computer", "a phone", "a cake", "a song", 
+                            "a movie", "a game", "a picture", "a letter", "a story", "a joke", 
+                            "a question", "an answer", "a problem", "a solution"];
+            
+            return `${randomChoice(subjects)} ${randomChoice(verbs)} ${randomChoice(objects)}.`;
+        }
+
+        function generateMediumSentence() {
+            const tense = randomChoice(["present", "past", "future", "continuous", "perfect"]);
+            
+            switch(tense) {
+                case "present":
+                    return `${randomChoice(["He", "She", "It"])} ${randomChoice(["reads", "writes", "plays", "sings", "dances"])} ${randomChoice(["books", "letters", "games", "songs"])}.`;
+                
+                case "past":
+                    return `${randomChoice(["I", "We", "They"])} ${randomChoice(["saw", "visited", "ate", "drank", "played"])} ${randomChoice(["a movie", "the museum", "dinner", "coffee", "tennis"])}.`;
+                
+                case "future":
+                    return `${randomChoice(["You", "She", "They"])} will ${randomChoice(["see", "visit", "eat", "drink", "play"])} ${randomChoice(["the show", "Paris", "lunch", "tea", "football"])}.`;
+                
+                case "continuous":
+                    return `${randomChoice(["I", "He", "They"])} ${randomChoice(["am", "is", "are"])} ${randomChoice(["reading", "writing", "playing", "singing", "dancing"])} ${randomChoice(["a book", "a letter", "a game", "a song"])}.`;
+                
+                case "perfect":
+                    return `${randomChoice(["I", "We", "She"])} ${randomChoice(["have", "has"])} ${randomChoice(["seen", "read", "visited", "eaten", "drunk"])} ${randomChoice(["that movie", "this book", "London", "dinner", "coffee"])}.`;
+                
+                default:
+                    return generateEasySentence();
+            }
+        }
+
+        function generateHardSentence() {
+            const structure = randomChoice(["perfect", "passive", "conditional", "relative", "modal", "question"]);
+            
+            switch(structure) {
+                case "perfect":
+                    return `${randomChoice(["I have", "She has", "We have"])} ${randomChoice(["been reading", "been working", "been waiting"])} ${randomChoice(["for hours", "since morning", "all day"])}.`;
+                
+                case "passive":
+                    return `${randomChoice(["The letter", "The cake", "The decision"])} was ${randomChoice(["written", "eaten", "made"])} by ${randomChoice(["John", "Mary", "the committee"])}.`;
+                
+                case "conditional":
+                    return `If ${randomChoice(["it rains", "you study", "they arrive"])}, ${randomChoice(["we will stay", "you will pass", "I will be"])} ${randomChoice(["home", "the exam", "happy"])}.`;
+                
+                case "relative":
+                    return `The ${randomChoice(["book", "movie", "person"])} that ${randomChoice(["I read", "you saw", "we met"])} was ${randomChoice(["interesting", "boring", "friendly"])}.`;
+                
+                case "modal":
+                    return `${randomChoice(["You", "He", "They"])} ${randomChoice(["should", "must", "might"])} ${randomChoice(["see", "visit", "try"])} ${randomChoice(["a doctor", "the museum", "this recipe"])}.`;
+                
+                case "question":
+                    return `${randomChoice(["Have you", "Did she", "Will they"])} ${randomChoice(["seen", "read", "visited"])} ${randomChoice(["that movie", "this book", "Paris"])}?`;
+                
+                default:
+                    return generateMediumSentence();
+            }
+        }
+
+        function getRandomMediumStructure() {
+            const structures = [
+                "Subject + Verb + Object",
+                "Subject + To Be + Verb-ing + Object",
+                "Subject + Verb (Past) + Object",
+                "Subject + Will + Verb + Object",
+                "Subject + Modal + Verb + Object",
+                "Subject + Verb + Adjective",
+                "Subject + Verb + Adverb"
+            ];
+            return randomChoice(structures);
+        }
+
+        function getRandomHardStructure() {
+            const structures = [
+                "Subject + Have/Has + Past Participle + Object",
+                "Subject + Was/Were + Verb-ing + Object",
+                "If + Subject + Verb, Subject + Will + Verb",
+                "Subject + Verb + Object + Relative Clause",
+                "Subject + To Be + Past Participle + By + Agent",
+                "Question Word + Auxiliary + Subject + Verb",
+                "Subject + Modal + Have + Past Participle"
+            ];
+            return randomChoice(structures);
+        }
+
+        // Helper function
+        function randomChoice(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        // Initialize sentences when the app loads
+        initializeSentences();
+
+        // DOM Elements
+        const themeToggle = document.querySelector('.theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const practiceBtn = document.getElementById('practice-btn');
+        const practiceContainer = document.getElementById('practice-container');
+        const questionElement = document.getElementById('question');
+        const scrambledWordsElement = document.getElementById('scrambled-words');
+        const wordBankElement = document.getElementById('word-bank');
+        const checkAnswerBtn = document.getElementById('check-answer-btn');
+        const feedbackElement = document.getElementById('feedback');
+        const nextQuestionBtn = document.getElementById('next-question-btn');
+        const progressFill = document.getElementById('progress-fill');
+
+        // Difficulty selection
+        document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                document.querySelectorAll('.difficulty-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Set the new difficulty
+                wordOrderDifficulty = this.dataset.difficulty;
+                
+                // If in practice mode, load a new question
+                if (wordOrderPracticeMode) {
+                    nextWordOrderQuestion();
+                }
+            });
+        });
+
+        // Practice mode toggle
+        practiceBtn.addEventListener('click', function() {
+            wordOrderPracticeMode = !wordOrderPracticeMode;
+            
+            if (wordOrderPracticeMode) {
+                this.innerHTML = '<i class="fas fa-stop"></i> End Practice';
+                practiceContainer.classList.remove('hidden');
+                wordOrderCorrectAnswers = 0;
+                wordOrderTotalQuestions = 0;
+                nextWordOrderQuestion();
+            } else {
+                this.innerHTML = '<i class="fas fa-play"></i> Start Practice';
+                practiceContainer.classList.add('hidden');
+                resetWordOrderUI();
+                
+                if (wordOrderTotalQuestions > 0) {
+                    const accuracy = Math.round((wordOrderCorrectAnswers / wordOrderTotalQuestions) * 100);
+                    alert(`Practice session completed!\nAccuracy: ${accuracy}%`);
+                }
+            }
+        });
+
+        // Check answer button
+        checkAnswerBtn.addEventListener('click', checkWordOrderAnswer);
+
+        // Next question button
+        nextQuestionBtn.addEventListener('click', nextWordOrderQuestion);
+
+        // Theme toggle
+        themeToggle.addEventListener('click', toggleTheme);
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        // Word order practice functions
+        function nextWordOrderQuestion() {
+            resetWordOrderUI();
+            
+            // Get a random pattern from the selected difficulty
+            const patterns = wordOrderPatterns[wordOrderDifficulty];
+            const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+            
+            currentWordOrderQuestion = {
+                pattern: pattern,
+                correctSentence: pattern.example,
+                scrambledWords: scrambleSentence(pattern.example)
+            };
+            
+            // Update progress bar
+            const progress = wordOrderTotalQuestions > 0 
+                ? Math.min(Math.round((wordOrderCorrectAnswers / wordOrderTotalQuestions) * 100), 100)
+                : 0;
+            progressFill.style.width = `${progress}%`;
+            
+            // Display question
+            questionElement.innerHTML = `
+                <h4>Difficulty: ${wordOrderDifficulty.charAt(0).toUpperCase() + wordOrderDifficulty.slice(1)}</h4>
+                <div>Arrange these words in the correct order:</div>
+                <div class="syntax-diagram">
+                    <strong>Structure:</strong> ${pattern.structure}
+                </div>
+            `;
+            
+            // Display scrambled words
+            scrambledWordsElement.innerHTML = '';
+            wordBankElement.innerHTML = '';
+            
+            currentWordOrderQuestion.scrambledWords.forEach((word, index) => {
+                const wordTile = document.createElement('div');
+                wordTile.className = 'word-tile';
+                wordTile.textContent = word;
+                wordTile.draggable = true;
+                wordTile.dataset.index = index;
+                
+                wordTile.addEventListener('dragstart', function(e) {
+                    draggedWord = this;
+                    setTimeout(() => {
+                        this.classList.add('dragging');
+                    }, 0);
+                });
+                
+                wordTile.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                });
+                
+                wordBankElement.appendChild(wordTile);
+            });
+            
+            // Set up drag and drop
+            setupDragAndDrop();
+        }
+
+        function scrambleSentence(sentence) {
+            // Remove punctuation and split into words
+            const words = sentence.replace(/[.,\/#!$%\^&\*;?:{}=\-_`~()]/g, '')
+                                 .split(' ')
+                                 .filter(word => word.length > 0);
+            
+            // Shuffle array
+            for (let i = words.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [words[i], words[j]] = [words[j], words[i]];
+            }
+            
+            return words;
+        }
+
+        function setupDragAndDrop() {
+            // Make word bank a drop zone
+            wordBankElement.addEventListener('dragover', function(e) {
+                e.preventDefault();
+            });
+            
+            wordBankElement.addEventListener('drop', function(e) {
+                e.preventDefault();
+                if (draggedWord && draggedWord.parentNode === scrambledWordsElement) {
+                    this.appendChild(draggedWord);
+                }
+            });
+            
+            // Make scrambled words area a drop zone
+            scrambledWordsElement.addEventListener('dragover', function(e) {
+                e.preventDefault();
+            });
+            
+            scrambledWordsElement.addEventListener('drop', function(e) {
+                e.preventDefault();
+                if (draggedWord) {
+                    this.appendChild(draggedWord);
+                }
+            });
+        }
+
+        function checkWordOrderAnswer() {
+            wordOrderTotalQuestions++;
+            
+            // Get the words in the order they were placed
+            const placedWords = Array.from(scrambledWordsElement.children)
+                                   .map(tile => tile.textContent)
+                                   .join(' ');
+            
+            // Compare with correct sentence (without punctuation for comparison)
+            const correctAnswer = currentWordOrderQuestion.correctSentence
+                .replace(/[.,\/#!$%\^&\*;?:{}=\-_`~()]/g, '');
+            
+            const isCorrect = placedWords.toLowerCase() === correctAnswer.toLowerCase();
+            
+            if (isCorrect) {
+                wordOrderCorrectAnswers++;
+                feedbackElement.innerHTML = `
+                    <i class="fas fa-check-circle"></i>
+                    <div>Perfect! Correct word order:</div>
+                    <div style="font-weight: bold; margin-top: 10px;">"${currentWordOrderQuestion.correctSentence}"</div>
+                `;
+                feedbackElement.className = 'feedback-box correct';
+                
+                // Mark all words as correct
+                Array.from(scrambledWordsElement.children).forEach(tile => {
+                    tile.classList.add('correct-position');
+                });
+            } else {
+                feedbackElement.innerHTML = `
+                    <i class="fas fa-times-circle"></i>
+                    <div>The correct order is:</div>
+                    <div style="font-weight: bold; margin-top: 10px;">"${currentWordOrderQuestion.correctSentence}"</div>
+                    <div class="syntax-diagram" style="margin-top: 15px;">
+                        <strong>Remember the structure:</strong> ${currentWordOrderQuestion.pattern.structure}
+                    </div>
+                `;
+                feedbackElement.className = 'feedback-box incorrect';
+                
+                // Highlight correct positions (simplified version)
+                const correctWords = correctAnswer.split(' ');
+                Array.from(scrambledWordsElement.children).forEach((tile, index) => {
+                    if (index < correctWords.length && 
+                        tile.textContent.toLowerCase() === correctWords[index].toLowerCase()) {
+                        tile.classList.add('correct-position');
+                    } else {
+                        tile.classList.add('incorrect-position');
+                    }
+                });
+            }
+            
+            checkAnswerBtn.classList.add('hidden');
+            nextQuestionBtn.classList.remove('hidden');
+        }
+
+        function resetWordOrderUI() {
+            feedbackElement.textContent = '';
+            feedbackElement.className = 'feedback-box';
+            checkAnswerBtn.classList.remove('hidden');
+            nextQuestionBtn.classList.add('hidden');
+        }
+
+        // Initialize the app
+        loadTheme();
+    </script>
+</body>
+</html>
