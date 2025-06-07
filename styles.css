@@ -226,6 +226,60 @@ body {
     font-size: 1rem;
 }
 
+/* Grammar Practice Specific Styles */
+#grammar-answer {
+    min-height: 100px;
+    resize: vertical;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.grammar-error {
+    background-color: rgba(253, 121, 168, 0.2);
+    border-bottom: 2px dashed var(--error-color);
+    position: relative;
+}
+
+.grammar-error::after {
+    content: '✖';
+    color: var(--error-color);
+    font-size: 0.8em;
+    position: absolute;
+    top: -15px;
+    right: 0;
+}
+
+.grammar-correction {
+    background-color: rgba(0, 184, 148, 0.2);
+    border-bottom: 2px dashed var(--success-color);
+    position: relative;
+}
+
+.grammar-correction::after {
+    content: '✓';
+    color: var(--success-color);
+    font-size: 0.8em;
+    position: absolute;
+    top: -15px;
+    right: 0;
+}
+
+.comparison {
+    margin: 15px 0;
+    line-height: 1.8;
+}
+
+.comparison div {
+    margin-bottom: 10px;
+}
+
+.explanation {
+    font-style: italic;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #dfe6e9;
+}
+
 .filter-options {
     display: flex;
     gap: 15px;
@@ -387,6 +441,10 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+}
+
+.practice-header h2 i.fa-grammar {
+    font-size: 1.3rem;
 }
 
 .progress-bar {
@@ -598,5 +656,9 @@ body {
     .practice-input {
         padding: 15px 20px;
         font-size: 1.1rem;
+    }
+    
+    .progress-bar {
+        width: 100px;
     }
 }
