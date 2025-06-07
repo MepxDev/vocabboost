@@ -198,6 +198,7 @@ body {
     outline: none;
 }
 
+/* Practice Input Specific Styles */
 .practice-input {
     width: 100%;
     padding: 18px 25px;
@@ -223,84 +224,6 @@ body {
     color: var(--text-light);
     opacity: 0.7;
     font-size: 1rem;
-}
-
-/* Word Order Practice Specific Styles */
-.scrambled-words {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 20px 0;
-    justify-content: center;
-    min-height: 80px;
-    padding: 15px;
-    background-color: rgba(108, 92, 231, 0.1);
-    border-radius: var(--border-radius);
-    border: 2px dashed var(--primary-color);
-}
-
-.word-bank {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 20px 0;
-    justify-content: center;
-    min-height: 80px;
-    padding: 15px;
-    background-color: rgba(108, 92, 231, 0.1);
-    border-radius: var(--border-radius);
-}
-
-.word-tile {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: grab;
-    user-select: none;
-    transition: all 0.2s ease;
-    font-size: 1.1rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.word-tile:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-}
-
-.word-tile.placed {
-    background-color: var(--accent-color);
-}
-
-.word-tile.correct-position {
-    background-color: var(--success-color);
-}
-
-.word-tile.incorrect-position {
-    background-color: var(--error-color);
-}
-
-.dragging {
-    opacity: 0.5;
-    transform: scale(1.1);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-.syntax-diagram {
-    margin: 20px 0;
-    padding: 15px;
-    background-color: rgba(0, 184, 148, 0.1);
-    border-left: 4px solid var(--success-color);
-    border-radius: 0 var(--border-radius) var(--border-radius) 0;
-}
-
-.syntax-diagram h4 {
-    margin-bottom: 10px;
-    color: var(--success-color);
-}
-
-.syntax-diagram ul {
-    padding-left: 20px;
 }
 
 .filter-options {
@@ -675,14 +598,5 @@ body {
     .practice-input {
         padding: 15px 20px;
         font-size: 1.1rem;
-    }
-    
-    .progress-bar {
-        width: 100px;
-    }
-    
-    .word-tile {
-        padding: 8px 12px;
-        font-size: 1rem;
     }
 }
