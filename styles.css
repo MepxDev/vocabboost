@@ -1,96 +1,241 @@
+:root {
+    --primary-color: #4a6fa5;
+    --secondary-color: #166088;
+    --accent-color: #4fc3f7;
+    --background-color: #f5f7fa;
+    --card-color: #ffffff;
+    --text-color: #333333;
+    --error-color: #e74c3c;
+    --success-color: #2ecc71;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #121212;
-  color: #f5f5f5;
-  margin: 0;
-  padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    padding: 20px;
 }
 
-.container {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 20px;
-  background: #1e1e1e;
-  border-radius: 10px;
-  box-shadow: 0 0 10px #000;
+.app-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
+header {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-#wordList {
-  list-style: none;
-  padding: 0;
+header h1 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
 }
 
-#wordList li {
-  background: #2c2c2c;
-  margin: 10px 0;
-  padding: 12px;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
-#wordList li span {
-  cursor: pointer;
-  flex-grow: 1;
+.controls input {
+    flex: 1;
+    min-width: 150px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
 }
 
-.delete-btn {
-  background: transparent;
-  color: #ff4d4d;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: transform 0.2s;
+.controls button {
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
 }
 
-.delete-btn:hover {
-  transform: scale(1.2);
+.controls button:hover {
+    background-color: var(--secondary-color);
 }
 
-#meaning {
-  margin-top: 20px;
-  padding: 15px;
-  background: #292929;
-  border-radius: 8px;
-  min-height: 50px;
-  font-size: 1.1rem;
+.filter-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
-form {
-  margin-top: 30px;
-  display: flex;
-  flex-direction: column;
+.filter-controls input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
 }
 
-form input,
-form textarea {
-  padding: 10px;
-  margin-bottom: 10px;
-  background: #333;
-  color: #fff;
-  border: 1px solid #444;
-  border-radius: 6px;
-  font-size: 1rem;
+.filter-controls select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
 }
 
-form button {
-  background: #3498db;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s;
+.word-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
 }
 
-form button:hover {
-  background: #2980b9;
+.word-card {
+    background-color: var(--card-color);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transition: transform 0.2s;
 }
 
+.word-card:hover {
+    transform: translateY(-5px);
+}
+
+.word-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.word-card p {
+    margin-bottom: 15px;
+}
+
+.word-card .delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--error-color);
+    color: white;
+    border: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.practice-section {
+    background-color: #f0f8ff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.practice-section h2 {
+    margin-bottom: 15px;
+    color: var(--secondary-color);
+}
+
+#practice-btn {
+    padding: 10px 25px;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+#practice-btn:hover {
+    background-color: var(--secondary-color);
+}
+
+#practice-container {
+    margin-top: 20px;
+}
+
+#practice-question {
+    font-size: 20px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+#practice-answer {
+    padding: 10px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+#check-answer-btn, #next-question-btn {
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#practice-feedback {
+    min-height: 30px;
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+.correct {
+    color: var(--success-color);
+}
+
+.incorrect {
+    color: var(--error-color);
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    font-size: 14px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@media (max-width: 600px) {
+    .controls {
+        flex-direction: column;
+    }
+    
+    .filter-controls {
+        flex-direction: column;
+    }
+    
+    .word-list {
+        grid-template-columns: 1fr;
+    }
+}
