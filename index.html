@@ -96,9 +96,10 @@
                 </div>
             </div>
 
+            <!-- Vocabulary Practice Section -->
             <div class="practice-section card">
                 <div class="practice-header">
-                    <h2><i class="fas fa-brain"></i> Practice Session</h2>
+                    <h2><i class="fas fa-brain"></i> Vocabulary Practice</h2>
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-fill"></div>
                     </div>
@@ -109,13 +110,39 @@
                 <div id="practice-container" class="hidden">
                     <div id="practice-question" class="question-box"></div>
                     <div class="answer-group">
-                        <input type="text" id="practice-answer" class="practice-input" placeholder="Type your answer here...">
+                        <input type="text" id="practice-answer" class="practice-input" placeholder="Your answer...">
                         <button id="check-answer-btn" class="glow-button">
                             <i class="fas fa-check"></i> Check Answer
                         </button>
                     </div>
                     <div id="practice-feedback" class="feedback-box"></div>
                     <button id="next-question-btn" class="glow-button hidden">
+                        <i class="fas fa-arrow-right"></i> Next Question
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grammar Practice Section -->
+            <div class="practice-section card">
+                <div class="practice-header">
+                    <h2><i class="fas fa-grammar"></i> Grammar Practice</h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="grammar-progress-fill"></div>
+                    </div>
+                </div>
+                <button id="grammar-practice-btn" class="glow-button pulse">
+                    <i class="fas fa-play"></i> Start Practice
+                </button>
+                <div id="grammar-container" class="hidden">
+                    <div id="grammar-question" class="question-box"></div>
+                    <div class="answer-group">
+                        <textarea id="grammar-answer" class="practice-input" placeholder="Type your corrected sentence here..."></textarea>
+                        <button id="check-grammar-btn" class="glow-button">
+                            <i class="fas fa-check"></i> Check Correction
+                        </button>
+                    </div>
+                    <div id="grammar-feedback" class="feedback-box"></div>
+                    <button id="next-grammar-btn" class="glow-button hidden">
                         <i class="fas fa-arrow-right"></i> Next Question
                     </button>
                 </div>
