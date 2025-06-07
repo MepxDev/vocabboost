@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const wordCount = document.getElementById('word-count');
     const masteredCount = document.getElementById('mastered-count');
     const streakCount = document.getElementById('streak-count');
+    
+    // Vocabulary Practice Elements
     const practiceBtn = document.getElementById('practice-btn');
     const practiceContainer = document.getElementById('practice-container');
     const practiceQuestion = document.getElementById('practice-question');
@@ -20,107 +22,87 @@ document.addEventListener('DOMContentLoaded', function() {
     const checkAnswerBtn = document.getElementById('check-answer-btn');
     const practiceFeedback = document.getElementById('practice-feedback');
     const nextQuestionBtn = document.getElementById('next-question-btn');
-    const grammarPracticeBtn = document.getElementById('grammar-practice-btn');
-    const grammarContainer = document.getElementById('grammar-container');
-    const grammarQuestion = document.getElementById('grammar-question');
-    const grammarAnswer = document.getElementById('grammar-answer');
-    const checkGrammarBtn = document.getElementById('check-grammar-btn');
-    const grammarFeedback = document.getElementById('grammar-feedback');
-    const nextGrammarBtn = document.getElementById('next-grammar-btn');
     const progressFill = document.getElementById('progress-fill');
-    const grammarProgressFill = document.getElementById('grammar-progress-fill');
+    
+    // Word Order Practice Elements
+    const wordOrderPracticeBtn = document.getElementById('wordorder-practice-btn');
+    const wordOrderContainer = document.getElementById('wordorder-container');
+    const wordOrderQuestion = document.getElementById('wordorder-question');
+    const scrambledWords = document.getElementById('scrambled-words');
+    const wordBank = document.getElementById('word-bank');
+    const checkWordOrderBtn = document.getElementById('check-wordorder-btn');
+    const wordOrderFeedback = document.getElementById('wordorder-feedback');
+    const nextWordOrderBtn = document.getElementById('next-wordorder-btn');
+    const wordOrderProgressFill = document.getElementById('wordorder-progress-fill');
+    
     const confettiContainer = document.getElementById('confetti-container');
 
     // State
     let words = JSON.parse(localStorage.getItem('words')) || [];
     let vocabPracticeMode = false;
-    let grammarPracticeMode = false;
+    let wordOrderPracticeMode = false;
     let currentQuestionIndex = 0;
     let questionType = '';
     let vocabCorrectAnswers = 0;
     let vocabTotalQuestions = 0;
-    let grammarCorrectAnswers = 0;
-    let grammarTotalQuestions = 0;
+    let wordOrderCorrectAnswers = 0;
+    let wordOrderTotalQuestions = 0;
     let lastPracticeDate = localStorage.getItem('lastPracticeDate') || null;
     let currentStreak = parseInt(localStorage.getItem('currentStreak')) || 0;
-    let currentGrammarQuestion = null;
+    let currentWordOrderQuestion = null;
+    let draggedWord = null;
 
-    // Grammar error patterns (can be expanded)
-    const grammarErrors = [
+    // Word order patterns
+    const wordOrderPatterns = [
         {
-            error: "their",
-            correction: "there",
-            example: "Their going to the park later."
+            description: "Basic SVO (Subject-Verb-Object) sentence",
+            structure: "Subject + Verb + Object",
+            example: "The cat chased the mouse."
         },
         {
-            error: "your",
-            correction: "you're",
-            example: "Your going to love this!"
+            description: "Sentence with time expression",
+            structure: "Subject + Verb + Object + Time",
+            example: "I eat breakfast at 8 AM."
         },
         {
-            error: "it's",
-            correction: "its",
-            example: "The dog wagged it's tail."
+            description: "Sentence with place expression",
+            structure: "Subject + Verb + Place + Object",
+            example: "She reads books in the library."
         },
         {
-            error: "could of",
-            correction: "could have",
-            example: "I could of gone to the party."
+            description: "Sentence with adverb",
+            structure: "Subject + Adverb + Verb + Object",
+            example: "He quickly finished his homework."
         },
         {
-            error: "less",
-            correction: "fewer",
-            example: "We have less options now."
+            description: "Negative sentence",
+            structure: "Subject + Auxiliary + Not + Verb + Object",
+            example: "They do not like pizza."
         },
         {
-            error: "then",
-            correction: "than",
-            example: "She is taller then him."
+            description: "Question with auxiliary",
+            structure: "Auxiliary + Subject + Verb + Object",
+            example: "Do you speak English?"
         },
         {
-            error: "affect",
-            correction: "effect",
-            example: "The medicine had a good affect."
+            description: "Question with question word",
+            structure: "Question Word + Auxiliary + Subject + Verb",
+            example: "Where did you go yesterday?"
         },
         {
-            error: "me",
-            correction: "I",
-            example: "Her and me went to the store."
+            description: "Sentence with indirect object",
+            structure: "Subject + Verb + Indirect Object + Direct Object",
+            example: "She gave her friend a gift."
         },
         {
-            error: "was",
-            correction: "were",
-            example: "If I was you, I'd go."
+            description: "Sentence with adjective",
+            structure: "Subject + Verb + Adjective + Object",
+            example: "She bought a beautiful dress."
         },
         {
-            error: "this",
-            correction: "these",
-            example: "This kind of problems are hard."
-        },
-        {
-            error: "alot",
-            correction: "a lot",
-            example: "I like pizza alot."
-        },
-        {
-            error: "should of",
-            correction: "should have",
-            example: "You should of seen that movie."
-        },
-        {
-            error: "its'",
-            correction: "its",
-            example: "The cat licked its' paw."
-        },
-        {
-            error: "to",
-            correction: "too",
-            example: "This is to much for me."
-        },
-        {
-            error: "loose",
-            correction: "lose",
-            example: "I don't want to loose the game."
+            description: "Sentence with frequency adverb",
+            structure: "Subject + Adverb + Verb + Object",
+            example: "I always drink coffee in the morning."
         }
     ];
 
@@ -142,19 +124,27 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.addEventListener('input', renderWordList);
     sortSelect.addEventListener('change', renderWordList);
     categoryFilter.addEventListener('change', renderWordList);
+    
+    // Vocabulary Practice Events
     practiceBtn.addEventListener('click', toggleVocabPractice);
     checkAnswerBtn.addEventListener('click', checkVocabAnswer);
     nextQuestionBtn.addEventListener('click', nextVocabQuestion);
     practiceAnswer.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') checkVocabAnswer();
     });
-    grammarPracticeBtn.addEventListener('click', toggleGrammarPractice);
-    checkGrammarBtn.addEventListener('click', checkGrammarAnswer);
-    nextGrammarBtn.addEventListener('click', nextGrammarQuestion);
-    grammarAnswer.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && e.ctrlKey) {
-            checkGrammarAnswer();
-        }
+    
+    // Word Order Practice Events
+    wordOrderPracticeBtn.addEventListener('click', toggleWordOrderPractice);
+    checkWordOrderBtn.addEventListener('click', checkWordOrderAnswer);
+    nextWordOrderBtn.addEventListener('click', nextWordOrderQuestion);
+    
+    // Drag and Drop Events
+    document.addEventListener('dragover', function(e) {
+        e.preventDefault();
+    });
+    
+    document.addEventListener('drop', function(e) {
+        e.preventDefault();
     });
 
     // Functions
@@ -358,6 +348,7 @@ document.addEventListener('DOMContentLoaded', function() {
         streakCount.textContent = currentStreak;
     }
 
+    // Vocabulary Practice Functions
     function toggleVocabPractice() {
         vocabPracticeMode = !vocabPracticeMode;
         
@@ -379,28 +370,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function toggleGrammarPractice() {
-        grammarPracticeMode = !grammarPracticeMode;
-        
-        if (grammarPracticeMode) {
-            checkStreak();
-            grammarPracticeBtn.innerHTML = '<i class="fas fa-stop"></i> End Practice';
-            grammarContainer.classList.remove('hidden');
-            grammarCorrectAnswers = 0;
-            grammarTotalQuestions = 0;
-            startGrammarPractice();
-        } else {
-            endGrammarPractice();
-        }
-    }
-
     function startVocabPractice() {
         currentQuestionIndex = 0;
         nextVocabQuestion();
-    }
-
-    function startGrammarPractice() {
-        nextGrammarQuestion();
     }
 
     function endVocabPractice() {
@@ -411,17 +383,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (vocabTotalQuestions > 0) {
             const accuracy = Math.round((vocabCorrectAnswers / vocabTotalQuestions) * 100);
             showNotification(`Vocabulary practice completed! Accuracy: ${accuracy}%`, 'success');
-        }
-    }
-
-    function endGrammarPractice() {
-        grammarPracticeBtn.innerHTML = '<i class="fas fa-play"></i> Start Practice';
-        grammarContainer.classList.add('hidden');
-        resetGrammarUI();
-        
-        if (grammarTotalQuestions > 0) {
-            const accuracy = Math.round((grammarCorrectAnswers / grammarTotalQuestions) * 100);
-            showNotification(`Grammar practice completed! Accuracy: ${accuracy}%`, 'success');
         }
     }
 
@@ -464,89 +425,6 @@ document.addEventListener('DOMContentLoaded', function() {
         nextQuestionBtn.classList.add('hidden');
         practiceAnswer.value = '';
         practiceAnswer.focus();
-    }
-
-    function nextGrammarQuestion() {
-        currentGrammarQuestion = generateGrammarQuestion();
-        grammarQuestion.innerHTML = `
-            <i class="fas fa-question-circle"></i>
-            <div>Correct this sentence:</div>
-            <div class="highlight">"${currentGrammarQuestion.sentence}"</div>
-        `;
-        
-        // Update progress bar
-        const progress = grammarTotalQuestions > 0 
-            ? Math.min(Math.round((grammarCorrectAnswers / grammarTotalQuestions) * 100), 100)
-            : 0;
-        grammarProgressFill.style.width = `${progress}%`;
-        
-        grammarAnswer.value = '';
-        grammarFeedback.innerHTML = '';
-        grammarFeedback.className = 'feedback-box';
-        nextGrammarBtn.classList.add('hidden');
-        grammarAnswer.focus();
-    }
-
-    function generateGrammarQuestion() {
-        // Select a random error pattern
-        const errorPattern = grammarErrors[Math.floor(Math.random() * grammarErrors.length)];
-        
-        // Sometimes use the example, sometimes generate a new sentence
-        let sentence;
-        if (Math.random() > 0.5) {
-            sentence = errorPattern.example;
-        } else {
-            // Simple sentence generator
-            const subjects = ["The cat", "My friend", "Our teacher", "The computer", "The weather", "Many people"];
-            const verbs = ["is", "was", "looks", "seems", "became", "appears"];
-            const objects = ["very happy", "too big", "quite interesting", "rather cold", "extremely fast", "completely wrong"];
-            const connectors = ["because", "although", "while", "since", "unless"];
-            const secondParts = ["it's fun", "they tried", "we know", "you see", "I agree"];
-            
-            // 50% chance for simple or complex sentence
-            if (Math.random() > 0.5) {
-                sentence = `${subjects[Math.floor(Math.random() * subjects.length)]} ` +
-                           `${verbs[Math.floor(Math.random() * verbs.length)]} ` +
-                           `${objects[Math.floor(Math.random() * objects.length)]}.`;
-            } else {
-                sentence = `${subjects[Math.floor(Math.random() * subjects.length)]} ` +
-                           `${verbs[Math.floor(Math.random() * verbs.length)]} ` +
-                           `${objects[Math.floor(Math.random() * objects.length)]} ` +
-                           `${connectors[Math.floor(Math.random() * connectors.length)]} ` +
-                           `${secondParts[Math.floor(Math.random() * secondParts.length)]}.`;
-            }
-            
-            // Introduce the error
-            sentence = sentence.replace(
-                new RegExp(`\\b${errorPattern.correction}\\b`, 'gi'), 
-                errorPattern.error
-            );
-        }
-        
-        return {
-            sentence,
-            error: errorPattern.error,
-            correction: errorPattern.correction,
-            explanation: `The word "${errorPattern.error}" should be "${errorPattern.correction}" in this context. ${getGrammarExplanation(errorPattern.error, errorPattern.correction)}`
-        };
-    }
-
-    function getGrammarExplanation(error, correction) {
-        const explanations = {
-            "their/there": "Use 'their' for possession (their house) and 'there' for location (over there).",
-            "your/you're": "'Your' shows possession (your book), while 'you're' is short for 'you are'.",
-            "it's/its": "'It's' means 'it is' or 'it has', while 'its' shows possession (its tail).",
-            "could of/could have": "The correct phrase is 'could have' (or 'could've'), not 'could of'.",
-            "less/fewer": "Use 'fewer' for countable items (fewer apples) and 'less' for uncountable (less water).",
-            "then/than": "'Then' relates to time (we ate, then left), 'than' is for comparisons (taller than).",
-            "affect/effect": "'Affect' is usually a verb (to affect change), 'effect' is usually a noun (the effect).",
-            "me/I": "Use 'I' as the subject (I went) and 'me' as the object (with me).",
-            "was/were": "Use 'were' in hypothetical situations (if I were you).",
-            "this/these": "'This' is singular (this book), 'these' is plural (these books)."
-        };
-        
-        const key = `${error}/${correction}`.toLowerCase();
-        return explanations[key] || "";
     }
 
     function checkVocabAnswer() {
@@ -596,60 +474,6 @@ document.addEventListener('DOMContentLoaded', function() {
         nextQuestionBtn.classList.remove('hidden');
     }
 
-    function checkGrammarAnswer() {
-        const userAnswer = grammarAnswer.value.trim();
-        const correctAnswer = currentGrammarQuestion.sentence.replace(
-            new RegExp(`\\b${currentGrammarQuestion.error}\\b`, 'gi'),
-            currentGrammarQuestion.correction
-        );
-
-        // Basic check - could be enhanced with more sophisticated comparison
-        const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
-
-        // Update stats
-        if (isCorrect) {
-            grammarCorrectAnswers++;
-        }
-        grammarTotalQuestions++;
-
-        // Highlight differences
-        let feedbackHTML = '';
-        if (isCorrect) {
-            feedbackHTML = `
-                <i class="fas fa-check-circle"></i>
-                <div>Perfect! Well done!</div>
-                <div class="highlight">"${correctAnswer}"</div>
-            `;
-            grammarFeedback.className = 'feedback-box correct';
-            createConfetti();
-        } else {
-            // Show comparison
-            const originalWithHighlight = currentGrammarQuestion.sentence.replace(
-                new RegExp(`\\b${currentGrammarQuestion.error}\\b`, 'gi'),
-                match => `<span class="grammar-error">${match}</span>`
-            );
-            
-            const correctedWithHighlight = correctAnswer.replace(
-                new RegExp(`\\b${currentGrammarQuestion.correction}\\b`, 'gi'),
-                match => `<span class="grammar-correction">${match}</span>`
-            );
-            
-            feedbackHTML = `
-                <i class="fas fa-times-circle"></i>
-                <div>Here's the correction:</div>
-                <div class="comparison">
-                    <div><strong>Original:</strong> ${originalWithHighlight}</div>
-                    <div><strong>Correct:</strong> ${correctedWithHighlight}</div>
-                </div>
-                <div class="explanation">${currentGrammarQuestion.explanation}</div>
-            `;
-            grammarFeedback.className = 'feedback-box incorrect';
-        }
-
-        grammarFeedback.innerHTML = feedbackHTML;
-        nextGrammarBtn.classList.remove('hidden');
-    }
-
     function resetVocabUI() {
         practiceFeedback.textContent = '';
         practiceFeedback.className = 'feedback-box';
@@ -658,14 +482,195 @@ document.addEventListener('DOMContentLoaded', function() {
         nextQuestionBtn.classList.add('hidden');
     }
 
-    function resetGrammarUI() {
-        grammarFeedback.textContent = '';
-        grammarFeedback.className = 'feedback-box';
-        grammarAnswer.classList.add('hidden');
-        checkGrammarBtn.classList.add('hidden');
-        nextGrammarBtn.classList.add('hidden');
+    // Word Order Practice Functions
+    function toggleWordOrderPractice() {
+        wordOrderPracticeMode = !wordOrderPracticeMode;
+        
+        if (wordOrderPracticeMode) {
+            checkStreak();
+            wordOrderPracticeBtn.innerHTML = '<i class="fas fa-stop"></i> End Practice';
+            wordOrderContainer.classList.remove('hidden');
+            wordOrderCorrectAnswers = 0;
+            wordOrderTotalQuestions = 0;
+            startWordOrderPractice();
+        } else {
+            endWordOrderPractice();
+        }
     }
 
+    function startWordOrderPractice() {
+        nextWordOrderQuestion();
+    }
+
+    function endWordOrderPractice() {
+        wordOrderPracticeBtn.innerHTML = '<i class="fas fa-play"></i> Start Practice';
+        wordOrderContainer.classList.add('hidden');
+        resetWordOrderUI();
+        
+        if (wordOrderTotalQuestions > 0) {
+            const accuracy = Math.round((wordOrderCorrectAnswers / wordOrderTotalQuestions) * 100);
+            showNotification(`Word order practice completed! Accuracy: ${accuracy}%`, 'success');
+        }
+    }
+
+    function nextWordOrderQuestion() {
+        resetWordOrderUI();
+        
+        // Select a random pattern
+        const pattern = wordOrderPatterns[Math.floor(Math.random() * wordOrderPatterns.length)];
+        currentWordOrderQuestion = {
+            pattern: pattern,
+            correctSentence: pattern.example,
+            scrambledWords: scrambleSentence(pattern.example)
+        };
+        
+        // Update progress bar
+        const progress = wordOrderTotalQuestions > 0 
+            ? Math.min(Math.round((wordOrderCorrectAnswers / wordOrderTotalQuestions) * 100), 100)
+            : 0;
+        wordOrderProgressFill.style.width = `${progress}%`;
+        
+        // Display question
+        wordOrderQuestion.innerHTML = `
+            <i class="fas fa-random"></i>
+            <div>Arrange these words in the correct order:</div>
+            <div class="syntax-diagram">
+                <h4>Pattern: ${pattern.structure}</h4>
+                <div>${pattern.description}</div>
+            </div>
+        `;
+        
+        // Display scrambled words
+        scrambledWords.innerHTML = '';
+        wordBank.innerHTML = '';
+        
+        currentWordOrderQuestion.scrambledWords.forEach((word, index) => {
+            const wordTile = document.createElement('div');
+            wordTile.className = 'word-tile';
+            wordTile.textContent = word;
+            wordTile.draggable = true;
+            wordTile.dataset.index = index;
+            
+            wordTile.addEventListener('dragstart', function(e) {
+                draggedWord = this;
+                setTimeout(() => {
+                    this.classList.add('dragging');
+                }, 0);
+            });
+            
+            wordTile.addEventListener('dragend', function() {
+                this.classList.remove('dragging');
+            });
+            
+            wordBank.appendChild(wordTile);
+        });
+        
+        // Make word bank a drop zone
+        wordBank.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+        
+        wordBank.addEventListener('drop', function(e) {
+            e.preventDefault();
+            if (draggedWord && draggedWord.parentNode === scrambledWords) {
+                this.appendChild(draggedWord);
+            }
+        });
+        
+        // Make scrambled words area a drop zone
+        scrambledWords.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+        
+        scrambledWords.addEventListener('drop', function(e) {
+            e.preventDefault();
+            if (draggedWord) {
+                this.appendChild(draggedWord);
+            }
+        });
+    }
+
+    function scrambleSentence(sentence) {
+        // Remove punctuation and split into words
+        const words = sentence.replace(/[.,\/#!$%\^&\*;?:{}=\-_`~()]/g, '')
+                             .split(' ')
+                             .filter(word => word.length > 0);
+        
+        // Shuffle array
+        for (let i = words.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [words[i], words[j]] = [words[j], words[i]];
+        }
+        
+        return words;
+    }
+
+    function checkWordOrderAnswer() {
+        wordOrderTotalQuestions++;
+        
+        // Get the words in the order they were placed
+        const placedWords = Array.from(scrambledWords.children)
+                               .map(tile => tile.textContent)
+                               .join(' ');
+        
+        // Compare with correct sentence (without punctuation for comparison)
+        const correctAnswer = currentWordOrderQuestion.correctSentence
+            .replace(/[.,\/#!$%\^&\*;?:{}=\-_`~()]/g, '');
+        
+        const isCorrect = placedWords.toLowerCase() === correctAnswer.toLowerCase();
+        
+        if (isCorrect) {
+            wordOrderCorrectAnswers++;
+            wordOrderFeedback.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                <div>Perfect! Correct word order:</div>
+                <div class="highlight">"${currentWordOrderQuestion.correctSentence}"</div>
+            `;
+            wordOrderFeedback.className = 'feedback-box correct';
+            
+            // Mark all words as correct
+            Array.from(scrambledWords.children).forEach(tile => {
+                tile.classList.add('correct-position');
+            });
+            
+            createConfetti();
+        } else {
+            wordOrderFeedback.innerHTML = `
+                <i class="fas fa-times-circle"></i>
+                <div>The correct order is:</div>
+                <div class="highlight">"${currentWordOrderQuestion.correctSentence}"</div>
+                <div class="syntax-diagram">
+                    <h4>Remember the pattern:</h4>
+                    <div>${currentWordOrderQuestion.pattern.structure}</div>
+                    <div>${currentWordOrderQuestion.pattern.description}</div>
+                </div>
+            `;
+            wordOrderFeedback.className = 'feedback-box incorrect';
+            
+            // Highlight correct positions (simplified version)
+            const correctWords = correctAnswer.split(' ');
+            Array.from(scrambledWords.children).forEach((tile, index) => {
+                if (index < correctWords.length && 
+                    tile.textContent.toLowerCase() === correctWords[index].toLowerCase()) {
+                    tile.classList.add('correct-position');
+                } else {
+                    tile.classList.add('incorrect-position');
+                }
+            });
+        }
+        
+        checkWordOrderBtn.classList.add('hidden');
+        nextWordOrderBtn.classList.remove('hidden');
+    }
+
+    function resetWordOrderUI() {
+        wordOrderFeedback.textContent = '';
+        wordOrderFeedback.className = 'feedback-box';
+        checkWordOrderBtn.classList.remove('hidden');
+        nextWordOrderBtn.classList.add('hidden');
+    }
+
+    // Utility Functions
     function createConfetti() {
         // Clear previous confetti
         confettiContainer.innerHTML = '';
