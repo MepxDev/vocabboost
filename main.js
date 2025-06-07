@@ -105,6 +105,26 @@ document.addEventListener('DOMContentLoaded', function() {
             example: "He cooked poorly things."
         },
         {
+            description: "Sentence with adjective",
+            structure: "Subject + Verb + Adjective + Object",
+            example: "He cooked poorly things."
+        },
+        {
+            description: "Sentence with adjective",
+            structure: "Subject + Verb + Adjective + Object",
+            example: "He cooked poorly things."
+        },
+        {
+            description: "Sentence with adjective",
+            structure: "Subject + Verb + Adjective + Object",
+            example: "He cooked poorly things."
+        },
+        {
+            description: "Sentence with adjective",
+            structure: "Subject + Verb + Adjective + Object",
+            example: "He cooked poorly things."
+        },
+        {
             description: "Sentence with frequency adverb",
             structure: "Subject + Adverb + Verb + Object",
             example: "I always drink coffee in the morning."
