@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Master | Vocabulary & Grammar Builder</title>
+    <title>Word Master | Vocabulary Builder</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -18,7 +18,7 @@
                 <i class="fas fa-language"></i>
                 <h1>Word Master</h1>
             </div>
-            <p class="tagline">Master vocabulary and grammar through practice</p>
+            <p class="tagline">Elevate your vocabulary to mastery</p>
         </header>
 
         <div class="stats-bar">
@@ -88,6 +88,7 @@
             </div>
 
             <div class="word-list" id="word-list">
+                <!-- Words will be added here dynamically -->
                 <div class="empty-state">
                     <i class="fas fa-book-open"></i>
                     <h3>Your word collection is empty</h3>
@@ -95,10 +96,9 @@
                 </div>
             </div>
 
-            <!-- Vocabulary Practice Section -->
             <div class="practice-section card">
                 <div class="practice-header">
-                    <h2><i class="fas fa-brain"></i> Vocabulary Practice</h2>
+                    <h2><i class="fas fa-brain"></i> Practice Session</h2>
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-fill"></div>
                     </div>
@@ -109,7 +109,7 @@
                 <div id="practice-container" class="hidden">
                     <div id="practice-question" class="question-box"></div>
                     <div class="answer-group">
-                        <input type="text" id="practice-answer" class="practice-input" placeholder="Your answer...">
+                        <input type="text" id="practice-answer" class="practice-input" placeholder="Type your answer here...">
                         <button id="check-answer-btn" class="glow-button">
                             <i class="fas fa-check"></i> Check Answer
                         </button>
@@ -120,37 +120,10 @@
                     </button>
                 </div>
             </div>
-
-            <!-- Word Order Practice Section -->
-            <div class="practice-section card">
-                <div class="practice-header">
-                    <h2><i class="fas fa-sort-alpha-down"></i> Word Order Practice</h2>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="wordorder-progress-fill"></div>
-                    </div>
-                </div>
-                <button id="wordorder-practice-btn" class="glow-button pulse">
-                    <i class="fas fa-play"></i> Start Practice
-                </button>
-                <div id="wordorder-container" class="hidden">
-                    <div id="wordorder-question" class="question-box"></div>
-                    <div class="scrambled-words" id="scrambled-words"></div>
-                    <div class="answer-group">
-                        <div class="word-bank" id="word-bank"></div>
-                        <button id="check-wordorder-btn" class="glow-button">
-                            <i class="fas fa-check"></i> Check Order
-                        </button>
-                    </div>
-                    <div id="wordorder-feedback" class="feedback-box"></div>
-                    <button id="next-wordorder-btn" class="glow-button hidden">
-                        <i class="fas fa-arrow-right"></i> Next Question
-                    </button>
-                </div>
-            </div>
         </main>
 
         <footer class="app-footer">
-            <p>Word Master v2.0 | Build your language skills daily!</p>
+            <p>Word Master v2.0 | Build your vocabulary daily!</p>
             <div class="social-links">
                 <a href="#"><i class="fab fa-twitter"></i></a>
                 <a href="#"><i class="fab fa-instagram"></i></a>
