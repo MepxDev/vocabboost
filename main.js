@@ -1,4 +1,3 @@
-// Load from localStorage or use default values
 let words = JSON.parse(localStorage.getItem("wordList")) || [
   { word: "Objection", meaning: "A lawyer's protest against something said or done." },
   { word: "Evidence", meaning: "Proof presented in court to support facts." }
@@ -16,12 +15,27 @@ function saveToStorage() {
 
 function displayWords() {
   wordListEl.innerHTML = "";
-  words.forEach((item) => {
+  words.forEach((item, index) => {
     const li = document.createElement("li");
-    li.textContent = item.word;
-    li.addEventListener("click", () => {
+
+    const wordSpan = document.createElement("span");
+    wordSpan.textContent = item.word;
+    wordSpan.addEventListener("click", () => {
       meaningEl.textContent = item.meaning;
     });
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "🗑️ Delete";
+    deleteBtn.classList.add("delete-btn");
+    deleteBtn.addEventListener("click", () => {
+      words.splice(index, 1);
+      saveToStorage();
+      displayWords();
+      meaningEl.textContent = "Click on a word to see its meaning here.";
+    });
+
+    li.appendChild(wordSpan);
+    li.appendChild(deleteBtn);
     wordListEl.appendChild(li);
   });
 }
@@ -40,5 +54,5 @@ form.addEventListener("submit", (e) => {
   }
 });
 
-window.addEventListener("beforeunload", saveToStorage); // Save again on exit
-displayWords(); // Load existing words
+window.addEventListener("beforeunload", saveToStorage);
+displayWords();
