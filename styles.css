@@ -19,26 +19,27 @@ h1 {
 #wordList li {
   background: white;
   margin: 8px 0;
-  padding: 12px;
+  padding: 10px;
   border-radius: 6px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   border: 1px solid #ccc;
 }
 
 #wordList li span {
-  cursor: pointer;
   flex-grow: 1;
+  margin-left: 10px;
+  cursor: pointer;
 }
 
 #wordList li:hover {
   background: #e8f0fe;
 }
 
-.delete-btn {
-  margin-left: 10px;
-  padding: 4px 8px;
+#deleteSelected {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 1rem;
   background: #e74c3c;
   color: white;
   border: none;
@@ -46,7 +47,7 @@ h1 {
   cursor: pointer;
 }
 
-.delete-btn:hover {
+#deleteSelected:hover {
   background: #c0392b;
 }
 
