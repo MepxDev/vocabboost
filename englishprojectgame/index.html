@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9-Level Riddle Challenge</title>
+<style>
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background-color: #f5f5f5;
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+margin: 0;
+padding: 20px;
+}
+
+.game-container {
+background-color: white;
+border-radius: 15px;
+box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+padding: 30px;
+width: 100%;
+max-width: 700px;
+text-align: center;
+}
+
+h1 {
+color: #2c3e50;
+margin-bottom: 20px;
+}
+
+.level-indicator {
+background-color: #3498db;
+color: white;
+padding: 8px 15px;
+border-radius: 20px;
+display: inline-block;
+margin-bottom: 20px;
+font-weight: bold;
+}
+
+.riddle-container {
+margin-bottom: 25px;
+min-height: 120px;
+background-color: #f9f9f9;
+padding: 20px;
+border-radius: 8px;
+border-left: 5px solid #3498db;
+}
+
+.riddle-text {
+font-size: 1.3rem;
+font-weight: bold;
+margin-bottom: 20px;
+color: #34495e;
+line-height: 1.5;
+}
+
+.answer-input {
+width: 80%;
+padding: 12px 15px;
+border: 2px solid #ddd;
+border-radius: 8px;
+font-size: 1.1rem;
+margin-bottom: 15px;
+transition: all 0.3s;
+}
+
+.answer-input:focus {
+border-color: #3498db;
+outline: none;
+box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.btn {
+background-color: #3498db;
+color: white;
+border: none;
+padding: 12px 28px;
+border-radius: 8px;
+cursor: pointer;
+font-size: 1.1rem;
+transition: all 0.3s;
+margin: 5px;
+}
+
+.btn:hover {
+background-color: #2980b9;
+transform: translateY(-2px);
+}
+
+.btn:active {
+transform: translateY(0);
+}
+
+.feedback {
+margin-top: 20px;
+padding: 15px 20px;
+border-radius: 8px;
+font-weight: bold;
+display: none;
+animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+
+.correct {
+background-color: #d4edda;
+color: #155724;
+display: block;
+border-left: 5px solid #28a745;
+}
+
+.incorrect {
+background-color: #f8d7da;
+color: #721c24;
+display: block;
+border-left: 5px solid #dc3545;
+}
+
+.score-container {
+margin-top: 25px;
+font-size: 1.2rem;
+color: #2c3e50;
+display: flex;
+justify-content: center;
+gap: 20px;
+}
+
+.score-box {
+background-color: #f8f9fa;
+padding: 10px 20px;
+border-radius: 8px;
+min-width: 100px;
+}
+
+.next-btn {
+display: none;
+}
+
+.hint {
+color: #7f8c8d;
+font-style: italic;
+margin-top: 15px;
+display: none;
+animation: fadeIn 0.5s;
+}
+
+.show-hint {
+background-color: transparent;
+color: #3498db;
+border: 1px solid #3498db;
+text-decoration: none;
+cursor: pointer;
+margin-top: 10px;
+font-size: 0.95rem;
+padding: 8px 15px;
+border-radius: 20px;
+transition: all 0.3s;
+}
+
+.show-hint:hover {
+background-color: #eaf4fd;
+}
+
+.game-over {
+font-size: 1.8rem;
+font-weight: bold;
+color: #2c3e50;
+margin-bottom: 25px;
+animation: bounce 0.5s;
+}
+
+@keyframes bounce {
+0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+40% {transform: translateY(-20px);}
+60% {transform: translateY(-10px);}
+}
+
+.restart-btn {
+background-color: #2ecc71;
+padding: 15px 30px;
+font-size: 1.2rem;
+}
+
+.restart-btn:hover {
+background-color: #27ae60;
+}
+
+.level-complete {
+font-size: 1.5rem;
+color: #27ae60;
+margin-bottom: 20px;
+font-weight: bold;
+}
+
+.progress-container {
+width: 100%;
+background-color: #e0e0e0;
+border-radius: 10px;
+margin: 20px 0;
+height: 10px;
+}
+
+.progress-bar {
+height: 100%;
+border-radius: 10px;
+background-color: #3498db;
+width: 0%;
+transition: width 0.5s;
+}
+
+.difficulty {
+font-size: 0.9rem;
+color: #7f8c8d;
+margin-bottom: 10px;
+font-style: italic;
+}
+
+.class-mastered {
+color: #f39c12;
+font-weight: bold;
+margin-top: 15px;
+}
+
+.class-requirements {
+margin: 15px 0;
+padding: 10px;
+background-color: #f8f9fa;
+border-radius: 8px;
+}
+</style>
+</head>
+<body>
+<div class="game-container">
+<h1>9-Level Riddle Challenge</h1>
+<div id="level-display" class="level-indicator">Class 1: Novice</div>
+<div id="difficulty" class="difficulty">Difficulty: ★☆☆☆☆</div>
+
+<div class="progress-container">
+<div id="progress-bar" class="progress-bar"></div>
+</div>
+
+<div id="game-content">
+<div class="riddle-container">
+<div id="riddle" class="riddle-text"></div>
+<div id="hint" class="hint"></div>
+<button id="show-hint" class="show-hint">Need a hint?</button>
+</div>
+
+<input type="text" id="answer-input" class="answer-input" placeholder="Your answer..." autocomplete="off">
+<button id="submit-btn" class="btn">Submit Answer</button>
+<button id="next-btn" class="btn next-btn">Next Riddle</button>
+
+<div id="feedback" class="feedback"></div>
+
+<div class="score-container">
+<div class="score-box">Score: <span id="score">0</span></div>
+<div class="score-box">Progress: <span id="current">1</span>/5</div>
+<div class="score-box">Class: <span id="class">1</span>/9</div>
+</div>
+
+<div class="class-requirements">
+Complete all 5 riddles to advance to the next class!
+</div>
+</div>
+</div>
+<script>
+// Riddle data organized by 9 difficulty levels (classes)
+const riddleClasses = [
+{ // Class 1: Novice
+name: "Novice",
+difficulty: "★☆☆☆☆☆☆☆☆",
+riddles: [
+{
+question: "What has to be broken before you can use it?",
+answer: "egg",
+hint: "It's something you might eat for breakfast."
+},
+{
+question: "I'm tall when I'm young, and I'm short when I'm old. What am I?",
+answer: "candle",
+hint: "It produces light and gets shorter as it burns."
+},
+{
+question: "What has hands but can't clap?",
+answer: "clock",
+hint: "It tells you the time and hangs on walls."
+},
+{
+question: "What has a head, a tail, but no body?",
+answer: "coin",
+hint: "You might flip me to make a decision."
+},
+{
+question: "What gets wet while drying?",
+answer: "towel",
+hint: "You use it after taking a shower."
+}
+]
+},
+{ // Class 2: Apprentice
+name: "Apprentice",
+difficulty: "★★☆☆☆☆☆☆☆",
+riddles: [
+{
+question: "What can you catch but not throw?",
+answer: "cold",
+hint: "It's something you might get in winter."
+},
+{
+question: "What goes through cities and fields but never moves?",
+answer: "road",
+hint: "Cars drive on it to get from place to place."
+},
+{
+question: "What has many keys but can't open any locks?",
+answer: "piano",
+hint: "Musicians play this instrument."
+},
+{
+question: "What has words but never speaks?",
+answer: "book",
+hint: "You're reading one now (sort of)."
+},
+{
+question: "What has a thumb and four fingers but is not alive?",
+answer: "glove",
+hint: "You wear it on your hand in cold weather."
+}
+]
+},
+{ // Class 3: Adept
+name: "Adept",
+difficulty: "★★★☆☆☆☆☆☆",
+riddles: [
+{
+question: "What has a neck but no head?",
+answer: "bottle",
+hint: "You might drink water from it."
+},
+{
+question: "What can travel around the world while staying in a corner?",
+answer: "stamp",
+hint: "You put it on letters before mailing them."
+},
+{
+question: "What has a face and two hands but no arms or legs?",
+answer: "clock",
+hint: "It tells you the time and hangs on walls."
+},
+{
+question: "What can you break without touching it?",
+answer: "promise",
+hint: "It's something you make to someone."
+},
+{
+question: "What gets sharper the more you use it?",
+answer: "brain",
+hint: "It's inside your head and helps you think."
+}
+]
+},
+{ // Class 4: Expert
+name: "Expert",
+difficulty: "★★★★☆☆☆☆☆",
+riddles: [
+{
+question: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?",
+answer: "echo",
+hint: "You often hear me in mountains or empty halls."
+},
+{
+question: "The more you take, the more you leave behind. What am I?",
+answer: "footsteps",
+hint: "Think about walking in sand or snow."
+},
+{
+question: "What has keys but can't open locks, has space but no room, and you can enter but not go inside?",
+answer: "keyboard",
+hint: "You're using one right now to play this game."
+},
+{
+question: "What can fill a room but takes up no space?",
+answer: "light",
+hint: "It allows you to see when it's dark."
+},
+{
+question: "What belongs to you but others use it more than you do?",
+answer: "name",
+hint: "It's how people identify and call you."
+}
+]
+},
+{ // Class 5: Scholar
+name: "Scholar",
+difficulty: "★★★★★☆☆☆☆",
+riddles: [
+{
+question: "What has cities but no houses, forests but no trees, and rivers but no water?",
+answer: "map",
+hint: "You might use this when you're lost."
+},
+{
+question: "What can run but never walks, has a mouth but never talks, has a head but never weeps, has a bed but never sleeps?",
+answer: "river",
+hint: "Fish live in it and boats float on it."
+},
+{
+question: "What goes up when rain comes down?",
+answer: "umbrella",
+hint: "You use it to stay dry in wet weather."
+},
+{
+question: "What is so fragile that saying its name breaks it?",
+answer: "silence",
+hint: "It's the absence of sound."
+},
+{
+question: "What can you hold in your right hand but not in your left?",
+answer: "left elbow",
+hint: "Think about parts of your own body."
+}
+]
+},
+{ // Class 6: Philosopher
+name: "Philosopher",
+difficulty: "★★★★★★☆☆☆",
+riddles: [
+{
+question: "What is always in front of you but can't be seen?",
+answer: "future",
+hint: "It's something we all think about but can't predict."
+},
+{
+question: "What goes through towns and over hills but never moves?",
+answer: "road",
+hint: "It's made of asphalt or concrete."
+},
+{
+question: "I'm light as a feather, yet the strongest person can't hold me for more than a few minutes. What am I?",
+answer: "breath",
+hint: "It's something you do constantly without thinking."
+},
+{
+question: "The person who makes it has no need for it; the person who buys it has no use for it. The person who uses it can neither see nor feel it. What is it?",
+answer: "coffin",
+hint: "It's associated with funerals."
+},
+{
+question: "What can you keep after giving it to someone else?",
+answer: "word",
+hint: "You might give someone your _____ of honor."
+}
+]
+},
+{ // Class 7: Sage
+name: "Sage",
+difficulty: "★★★★★★★☆☆",
+riddles: [
+{
+question: "What gets bigger the more you take away from it?",
+answer: "hole",
+hint: "You might dig one in the ground."
+},
+{
+question: "What has a heart that doesn't beat?",
+answer: "artichoke",
+hint: "It's a vegetable with many layers."
+},
+{
+question: "What can you hold without ever touching it?",
+answer: "conversation",
+hint: "You do it when you talk with someone."
+},
+{
+question: "What has no beginning, end, or middle?",
+answer: "doughnut",
+hint: "It's a sweet, ring-shaped pastry."
+},
+{
+question: "What has a bottom at the top?",
+answer: "leg",
+hint: "You have two of them and walk with them."
+}
+]
+},
+{ // Class 8: Master
+name: "Master",
+difficulty: "★★★★★★★★☆",
+riddles: [
+{
+question: "What goes up and down but doesn't move?",
+answer: "staircase",
+hint: "You use it to change floors in a building."
+},
+{
+question: "What has a ring but no finger?",
+answer: "telephone",
+hint: "You might answer it when it makes a sound."
+},
+{
+question: "What is full of holes but still holds water?",
+answer: "sponge",
+hint: "You use it for cleaning dishes."
+},
+{
+question: "What has a face that doesn't frown, doesn't smile, but can look around?",
+answer: "clock",
+hint: "It tells you the time with moving parts."
+},
+{
+question: "What is always coming but never arrives?",
+answer: "tomorrow",
+hint: "It's always one day away."
+}
+]
+},
+{ // Class 9: Grandmaster
+name: "Grandmaster",
+difficulty: "★★★★★★★★★",
+riddles: [
+{
+question: "What can you see once in a minute, twice in a moment, but never in a thousand years?",
+answer: "m",
+hint: "Look at the letters in the words mentioned."
+},
+{
+question: "What is so light that the strongest man can't hold it for more than a few minutes?",
+answer: "breath",
+hint: "It's essential for life."
+},
+{
+question: "What is always old and sometimes new; never sad, sometimes blue; never empty, sometimes full; never pushes, always pulls?",
+answer: "moon",
+hint: "It affects ocean tides."
+},
+{
+question: "The more there is, the less you see. What is it?",
+answer: "darkness",
+hint: "It's the absence of light."
+},
+{
+question: "What can you make that no one — not even you — can see?",
+answer: "noise",
+hint: "It's something you hear rather than see."
+}
+]
+}
+];
+// Game variables
+let currentClass = 0;
+let currentRiddleIndex = 0;
+let score = 0;
+let gameActive = true;
+// DOM elements
+let riddleElement = document.getElementById('riddle');
+let answerInput = document.getElementById('answer-input');
+let submitBtn = document.getElementById('submit-btn');
+let nextBtn = document.getElementById('next-btn');
+let feedbackElement = document.getElementById('feedback');
+let scoreElement = document.getElementById('score');
+let currentElement = document.getElementById('current');
+let classElement = document.getElementById('class');
+let hintElement = document.getElementById('hint');
+let showHintBtn = document.getElementById('show-hint');
+const gameContent = document.getElementById('game-content');
+const levelDisplay = document.getElementById('level-display');
+const difficultyDisplay = document.getElementById('difficulty');
+const progressBar = document.getElementById('progress-bar');
+// Initialize the game
+function initGame() {
+currentClass = 0;
+currentRiddleIndex = 0;
+score = 0;
+gameActive = true;
+resetGameContent();
+displayRiddle();
+initEventListeners();
+}
+// Reset game content to initial state
+function resetGameContent() {
+gameContent.innerHTML = `
+<div class="riddle-container">
+<div id="riddle" class="riddle-text"></div>
+<div id="hint" class="hint"></div>
+<button id="show-hint" class="show-hint">Need a hint?</button>
+</div>
+
+<input type="text" id="answer-input" class="answer-input" placeholder="Your answer..." autocomplete="off">
+<button id="submit-btn" class="btn">Submit Answer</button>
+<button id="next-btn" class="btn next-btn">Next Riddle</button>
+
+<div id="feedback" class="feedback"></div>
+
+<div class="score-container">
+<div class="score-box">Score: <span id="score">0</span></div>
+<div class="score-box">Progress: <span id="current">1</span>/5</div>
+<div class="score-box">Class: <span id="class">${currentClass + 1}</span>/9</div>
+</div>
+
+<div class="class-requirements">
+Complete all 5 riddles to advance to the next class!
+</div>
+`;
+
+// Reinitialize DOM elements
+riddleElement = document.getElementById('riddle');
+answerInput = document.getElementById('answer-input');
+submitBtn = document.getElementById('submit-btn');
+nextBtn = document.getElementById('next-btn');
+feedbackElement = document.getElementById('feedback');
+scoreElement = document.getElementById('score');
+currentElement = document.getElementById('current');
+classElement = document.getElementById('class');
+hintElement = document.getElementById('hint');
+showHintBtn = document.getElementById('show-hint');
+
+// Update displays
+scoreElement.textContent = score;
+currentElement.textContent = currentRiddleIndex + 1;
+classElement.textContent = currentClass + 1;
+updateLevelDisplay();
+}
+// Update level display
+function updateLevelDisplay() {
+levelDisplay.textContent = `Class ${currentClass + 1}: ${riddleClasses[currentClass].name}`;
+difficultyDisplay.textContent = `Difficulty: ${riddleClasses[currentClass].difficulty}`;
+updateProgressBar();
+}
+// Update progress bar
+function updateProgressBar() {
+const progress = ((currentClass * 5 + currentRiddleIndex) / (riddleClasses.length * 5)) * 100;
+progressBar.style.width = `${progress}%`;
+}
+// Display the current riddle
+function displayRiddle() {
+if (currentRiddleIndex < riddleClasses[currentClass].riddles.length) {
+const currentRiddle = riddleClasses[currentClass].riddles[currentRiddleIndex];
+riddleElement.textContent = currentRiddle.question;
+hintElement.textContent = currentRiddle.hint;
+hintElement.style.display = 'none';
+showHintBtn.style.display = 'inline';
+answerInput.value = '';
+answerInput.focus();
+feedbackElement.className = 'feedback';
+feedbackElement.style.display = 'none';
+nextBtn.style.display = 'none';
+submitBtn.style.display = 'inline';
+currentElement.textContent = currentRiddleIndex + 1;
+updateProgressBar();
+} else {
+completeClass();
+}
+}
+// Check the user's answer
+function checkAnswer() {
+const userAnswer = answerInput.value.trim().toLowerCase();
+const correctAnswer = riddleClasses[currentClass].riddles[currentRiddleIndex].answer.toLowerCase();
+
+if (userAnswer === correctAnswer) {
+feedbackElement.textContent = 'Correct! Well done!';
+feedbackElement.className = 'feedback correct';
+score++;
+scoreElement.textContent = score;
+} else {
+feedbackElement.textContent = `Incorrect! The correct answer is "${correctAnswer}".`;
+feedbackElement.className = 'feedback incorrect';
+}
+
+feedbackElement.style.display = 'block';
+submitBtn.style.display = 'none';
+nextBtn.style.display = 'inline';
+hintElement.style.display = 'none';
+showHintBtn.style.display = 'none';
+}
+// Move to the next riddle
+function nextRiddle() {
+currentRiddleIndex++;
+if (currentRiddleIndex < riddleClasses[currentClass].riddles.length) {
+displayRiddle();
+} else {
+completeClass();
+}
+}
+// Complete the current class
+function completeClass() {
+if (currentClass < riddleClasses.length - 1) {
+gameContent.innerHTML = `
+<div class="level-complete">Class ${currentClass + 1} Completed!</div>
+<div>You answered ${score} out of 5 riddles correctly.</div>
+<div class="class-mastered">Advancing to Class ${currentClass + 2}!</div>
+<button id="next-class-btn" class="btn">Continue to Next Class</button>
+`;
+
+document.getElementById('next-class-btn').addEventListener('click', advanceClass);
+} else {
+endGame();
+}
+}
+// Advance to the next class
+function advanceClass() {
+currentClass++;
+currentRiddleIndex = 0;
+score = 0;
+resetGameContent();
+displayRiddle();
+initEventListeners();
+}
+// End the game
+function endGame() {
+gameActive = false;
+gameContent.innerHTML = `
+<div class="game-over">Congratulations!</div>
+<div>You've completed all 9 classes with a total score of ${score} out of ${currentRiddleIndex}.</div>
+<div class="class-mastered">You are now a Riddle Grandmaster!</div>
+<button id="restart-btn" class="btn restart-btn">Play Again</button>
+`;
+
+document.getElementById('restart-btn').addEventListener('click', initGame);
+}
+// Show hint
+function showHint() {
+hintElement.style.display = 'block';
+showHintBtn.style.display = 'none';
+}
+// Initialize event listeners
+function initEventListeners() {
+submitBtn.addEventListener('click', checkAnswer);
+nextBtn.addEventListener('click', nextRiddle);
+showHintBtn.addEventListener('click', showHint);
+
+answerInput.addEventListener('keypress', function(e) {
+if (e.key === 'Enter') {
+if (submitBtn.style.display !== 'none') {
+checkAnswer();
+} else if (nextBtn.style.display !== 'none') {
+nextRiddle();
+}
+}
+});
+}
+// Start the game
+initGame();
+</script>
+</body>
+</html>
+
