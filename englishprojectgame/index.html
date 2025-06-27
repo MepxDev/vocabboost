@@ -5,31 +5,61 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Comparative & Superlative Adjectives Game</title>
 <style>
+:root {
+--primary: #3498db;
+--primary-dark: #2980b9;
+--secondary: #9b59b6;
+--secondary-dark: #8e44ad;
+--success: #2ecc71;
+--success-dark: #27ae60;
+--danger: #e74c3c;
+--danger-dark: #c0392b;
+--warning: #f39c12;
+--warning-dark: #e67e22;
+--light: #ecf0f1;
+--dark: #2c3e50;
+--background: #f0f8ff;
+--card-bg: #ffffff;
+}
+
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+
 body {
 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-background-color: #f0f8ff;
+background-color: var(--background);
 margin: 0;
 padding: 20px;
-color: #333;
+color: var(--dark);
+min-height: 100vh;
 }
 
 .container {
 max-width: 800px;
 margin: 0 auto;
-background-color: white;
+background-color: var(--card-bg);
 padding: 30px;
 border-radius: 10px;
 box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+position: relative;
+overflow: hidden;
 }
 
 h1 {
-color: #2c3e50;
+color: var(--dark);
 text-align: center;
 margin-bottom: 30px;
+position: relative;
+z-index: 1;
 }
 
 .game-area {
 margin-bottom: 20px;
+position: relative;
+z-index: 1;
 }
 
 .question {
@@ -38,6 +68,18 @@ margin-bottom: 20px;
 padding: 15px;
 background-color: #eaf2f8;
 border-radius: 8px;
+position: relative;
+overflow: hidden;
+}
+
+.question::after {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 5px;
+height: 100%;
+background: linear-gradient(to bottom, var(--primary), var(--secondary));
 }
 
 .options {
@@ -49,44 +91,95 @@ margin-bottom: 20px;
 
 .option {
 padding: 15px;
-background-color: #3498db;
+background-color: var(--primary);
 color: white;
 border: none;
 border-radius: 5px;
 cursor: pointer;
 font-size: 1.1em;
 transition: all 0.3s;
+position: relative;
+overflow: hidden;
+z-index: 1;
 }
 
 .option:hover {
-background-color: #2980b9;
+background-color: var(--primary-dark);
 transform: translateY(-2px);
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.option::before {
+content: '';
+position: absolute;
+top: 0;
+left: -100%;
+width: 100%;
+height: 100%;
+background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+transition: 0.5s;
+z-index: -1;
+}
+
+.option:hover::before {
+left: 100%;
 }
 
 .option.correct {
-background-color: #2ecc71;
+background-color: var(--success);
+animation: pulse 0.5s;
 }
 
 .option.incorrect {
-background-color: #e74c3c;
+background-color: var(--danger);
+}
+
+@keyframes pulse {
+0% { transform: scale(1); }
+50% { transform: scale(1.05); }
+100% { transform: scale(1); }
 }
 
 .progress-container {
 margin-bottom: 20px;
+position: relative;
 }
 
 .progress-bar {
 height: 20px;
-background-color: #ecf0f1;
+background-color: var(--light);
 border-radius: 10px;
 overflow: hidden;
+box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .progress {
 height: 100%;
-background-color: #27ae60;
+background: linear-gradient(to right, var(--primary), var(--secondary));
 width: 0%;
-transition: width 0.3s;
+transition: width 0.5s ease;
+position: relative;
+}
+
+.progress::after {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: linear-gradient(to right,
+rgba(255,255,255,0.1) 0%,
+rgba(255,255,255,0.3) 50%,
+rgba(255,255,255,0.1) 100%);
+background-size: 200% 100%;
+animation: shimmer 2s infinite;
+border-radius: 10px;
+}
+
+@keyframes shimmer {
+0% { background-position: 200% 0; }
+100% { background-position: -200% 0; }
 }
 
 .stats {
@@ -94,11 +187,36 @@ display: flex;
 justify-content: space-between;
 margin-bottom: 20px;
 font-size: 1.1em;
+flex-wrap: wrap;
+gap: 10px;
+}
+
+.stat-box {
+background-color: #f8f9fa;
+padding: 10px 15px;
+border-radius: 5px;
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.stat-icon {
+font-size: 1.2em;
 }
 
 .score {
 font-weight: bold;
-color: #2c3e50;
+color: var(--dark);
+}
+
+.rank {
+background-color: #fff3cd;
+color: #856404;
+padding: 5px 10px;
+border-radius: 20px;
+font-size: 0.9em;
+font-weight: bold;
 }
 
 .feedback {
@@ -106,35 +224,64 @@ min-height: 30px;
 margin-bottom: 20px;
 font-size: 1.2em;
 text-align: center;
-padding: 10px;
+padding: 15px;
 border-radius: 5px;
+opacity: 0;
+transform: translateY(20px);
+transition: all 0.3s ease;
+}
+
+.feedback.show {
+opacity: 1;
+transform: translateY(0);
 }
 
 .correct-feedback {
 background-color: #d5f5e3;
-color: #27ae60;
+color: var(--success-dark);
+border-left: 5px solid var(--success);
 }
 
 .incorrect-feedback {
 background-color: #fadbd8;
-color: #e74c3c;
+color: var(--danger-dark);
+border-left: 5px solid var(--danger);
 }
 
 .next-btn {
 display: block;
 width: 100%;
 padding: 15px;
-background-color: #9b59b6;
+background-color: var(--secondary);
 color: white;
 border: none;
 border-radius: 5px;
 font-size: 1.2em;
 cursor: pointer;
 transition: all 0.3s;
+position: relative;
+overflow: hidden;
 }
 
 .next-btn:hover {
-background-color: #8e44ad;
+background-color: var(--secondary-dark);
+transform: translateY(-2px);
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.next-btn::after {
+content: '→';
+position: absolute;
+right: 20px;
+top: 50%;
+transform: translateY(-50%);
+opacity: 0;
+transition: all 0.3s;
+}
+
+.next-btn:hover::after {
+opacity: 1;
+right: 15px;
 }
 
 .hidden {
@@ -144,26 +291,58 @@ display: none;
 .game-over {
 text-align: center;
 padding: 20px;
+animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(20px); }
+to { opacity: 1; transform: translateY(0); }
 }
 
 .game-over h2 {
-color: #2c3e50;
+color: var(--dark);
 margin-bottom: 20px;
+font-size: 2em;
+}
+
+.final-score {
+font-size: 3em;
+font-weight: bold;
+color: var(--secondary);
+margin: 20px 0;
+text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.final-rank {
+font-size: 1.5em;
+margin: 15px 0;
+padding: 10px 20px;
+border-radius: 30px;
+display: inline-block;
+}
+
+.performance-message {
+font-size: 1.2em;
+margin: 20px 0;
+line-height: 1.6;
 }
 
 .restart-btn {
 padding: 15px 30px;
-background-color: #3498db;
+background-color: var(--primary);
 color: white;
 border: none;
 border-radius: 5px;
 font-size: 1.2em;
 cursor: pointer;
 transition: all 0.3s;
+margin-top: 20px;
 }
 
 .restart-btn:hover {
-background-color: #2980b9;
+background-color: var(--primary-dark);
+transform: translateY(-2px);
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .rules {
@@ -172,6 +351,230 @@ padding: 15px;
 border-radius: 8px;
 margin-bottom: 20px;
 border-left: 5px solid #fbc02d;
+position: relative;
+}
+
+.rules h3 {
+margin-bottom: 10px;
+color: #5d4037;
+}
+
+.rules p {
+margin-bottom: 5px;
+color: #5d4037;
+}
+
+.timer-container {
+margin-bottom: 15px;
+}
+
+.timer {
+font-size: 1.2em;
+font-weight: bold;
+color: var(--dark);
+}
+
+.time-bar {
+height: 10px;
+background-color: var(--light);
+border-radius: 5px;
+margin-top: 5px;
+overflow: hidden;
+}
+
+.time-progress {
+height: 100%;
+background: linear-gradient(to right, var(--warning), var(--danger));
+width: 100%;
+transition: width 1s linear;
+}
+
+.streak-counter {
+position: fixed;
+top: 20px;
+right: 20px;
+background-color: var(--danger);
+color: white;
+padding: 10px 15px;
+border-radius: 50px;
+font-weight: bold;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+display: flex;
+align-items: center;
+gap: 8px;
+transform: translateY(-100px);
+opacity: 0;
+transition: all 0.3s ease;
+z-index: 100;
+}
+
+.streak-counter.show {
+transform: translateY(0);
+opacity: 1;
+}
+
+.flame-icon {
+animation: flicker 0.5s infinite alternate;
+}
+
+@keyframes flicker {
+0% { opacity: 0.7; transform: scale(1); }
+100% { opacity: 1; transform: scale(1.1); }
+}
+
+.confetti {
+position: absolute;
+width: 10px;
+height: 10px;
+background-color: #f00;
+border-radius: 50%;
+animation: confetti-fall 5s linear forwards;
+z-index: 10;
+}
+
+@keyframes confetti-fall {
+0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+100% { transform: translateY(1000px) rotate(720deg); opacity: 0; }
+}
+
+.rank-progress {
+width: 100%;
+height: 10px;
+background-color: var(--light);
+border-radius: 5px;
+margin-top: 10px;
+overflow: hidden;
+}
+
+.rank-progress-bar {
+height: 100%;
+background: linear-gradient(to right, #fbc02d, #f57c00);
+width: 0%;
+transition: width 0.5s ease;
+}
+
+.rank-container {
+display: flex;
+justify-content: space-between;
+margin-top: 5px;
+font-size: 0.9em;
+color: var(--dark);
+}
+
+.rank-item {
+text-align: center;
+flex: 1;
+position: relative;
+}
+
+.rank-item.active {
+font-weight: bold;
+color: var(--secondary-dark);
+}
+
+.rank-item::after {
+content: '';
+position: absolute;
+top: -15px;
+left: 50%;
+transform: translateX(-50%);
+width: 10px;
+height: 10px;
+background-color: #bdbdbd;
+border-radius: 50%;
+}
+
+.rank-item.active::after {
+background-color: var(--secondary-dark);
+box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.3);
+}
+
+.rank-item:first-child::after {
+background-color: #ffd700;
+box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+}
+
+.rank-item:nth-child(2)::after {
+background-color: #c0c0c0;
+box-shadow: 0 0 0 3px rgba(192, 192, 192, 0.3);
+}
+
+.rank-item:nth-child(3)::after {
+background-color: #cd7f32;
+box-shadow: 0 0 0 3px rgba(205, 127, 50, 0.3);
+}
+
+.achievements {
+margin-top: 30px;
+}
+
+.achievements h3 {
+margin-bottom: 15px;
+color: var(--dark);
+}
+
+.achievement-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+gap: 15px;
+}
+
+.achievement {
+background-color: #f8f9fa;
+border-radius: 8px;
+padding: 10px;
+text-align: center;
+transition: all 0.3s;
+border: 2px solid #e9ecef;
+}
+
+.achievement.locked {
+filter: grayscale(100%);
+opacity: 0.7;
+}
+
+.achievement.unlocked {
+border-color: var(--success);
+box-shadow: 0 4px 8px rgba(46, 204, 113, 0.2);
+}
+
+.achievement-icon {
+font-size: 2em;
+margin-bottom: 5px;
+}
+
+.achievement-title {
+font-weight: bold;
+margin-bottom: 5px;
+}
+
+.achievement-desc {
+font-size: 0.8em;
+color: #6c757d;
+}
+
+.bonus-points {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background-color: rgba(46, 204, 113, 0.9);
+color: white;
+padding: 10px 20px;
+border-radius: 50px;
+font-weight: bold;
+font-size: 1.5em;
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+z-index: 100;
+opacity: 0;
+animation: bonusFade 2s ease-out;
+}
+
+@keyframes bonusFade {
+0% { opacity: 0; transform: translate(-50%, -30%); }
+20% { opacity: 1; transform: translate(-50%, -50%); }
+80% { opacity: 1; transform: translate(-50%, -50%); }
+100% { opacity: 0; transform: translate(-50%, -70%); }
 }
 
 @media (max-width: 600px) {
@@ -182,21 +585,62 @@ grid-template-columns: 1fr;
 .container {
 padding: 15px;
 }
+
+.achievement-grid {
+grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+}
 }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+<div class="streak-counter" id="streak-counter">
+<i class="fas fa-fire flame-icon"></i>
+<span id="streak-count">0</span> streak!
+</div>
+
 <div class="container">
 <h1>Comparative & Superlative Adjectives Game</h1>
 
 <div class="rules">
 <h3>How to Play:</h3>
-<p>Choose the correct form of the adjective - comparative or superlative. Comparative adjectives compare two things (e.g., "bigger"), while superlative adjectives compare three or more things (e.g., "biggest").</p>
+<p>Choose the correct form of the adjective - comparative or superlative.</p>
+<p>Answer quickly to earn bonus points and maintain your streak!</p>
+<div class="rank-container">
+<div class="rank-item" data-rank="Novice">Novice</div>
+<div class="rank-item" data-rank="Apprentice">Apprentice</div>
+<div class="rank-item" data-rank="Adept">Adept</div>
+<div class="rank-item" data-rank="Expert">Expert</div>
+<div class="rank-item" data-rank="Master">Master</div>
+</div>
+<div class="rank-progress">
+<div class="rank-progress-bar" id="rank-progress"></div>
+</div>
 </div>
 
 <div class="stats">
-<div class="score">Score: <span id="score">0</span></div>
-<div class="progress-text">Question <span id="current-question">1</span> of 200</div>
+<div class="stat-box">
+<i class="fas fa-star stat-icon"></i>
+<span>Score: <span id="score">0</span></span>
+</div>
+<div class="stat-box">
+<i class="fas fa-question-circle stat-icon"></i>
+<span>Question <span id="current-question">1</span>/200</span>
+</div>
+<div class="stat-box">
+<i class="fas fa-tachometer-alt stat-icon"></i>
+<span>Rank: <span id="current-rank">Novice</span></span>
+</div>
+<div class="stat-box">
+<i class="fas fa-clock stat-icon"></i>
+<span>Time: <span id="timer">15</span>s</span>
+</div>
+</div>
+
+<div class="timer-container">
+<div class="time-bar">
+<div class="time-progress" id="time-progress"></div>
+</div>
 </div>
 
 <div class="progress-container">
@@ -208,15 +652,26 @@ padding: 15px;
 <div class="game-area" id="game-area">
 <div class="question" id="question"></div>
 <div class="options" id="options"></div>
-<div class="feedback hidden" id="feedback"></div>
+<div class="feedback" id="feedback"></div>
 <button class="next-btn hidden" id="next-btn">Next Question</button>
 </div>
 
 <div class="game-over hidden" id="game-over">
 <h2>Game Completed!</h2>
-<p>Your final score: <span id="final-score">0</span> out of 200</p>
-<p id="performance-message"></p>
-<button class="restart-btn" id="restart-btn">Play Again</button>
+<div class="final-score" id="final-score">0</div>
+<div class="final-rank" id="final-rank">Novice</div>
+<p class="performance-message" id="performance-message"></p>
+
+<div class="achievements">
+<h3>Your Achievements</h3>
+<div class="achievement-grid" id="achievement-grid">
+<!-- Achievements will be added here by JavaScript -->
+</div>
+</div>
+
+<button class="restart-btn" id="restart-btn">
+<i class="fas fa-redo"></i> Play Again
+</button>
 </div>
 </div>
 <script>
@@ -225,1073 +680,1376 @@ const questions = [
 {
 question: "The Nile is the ___ river in the world.",
 options: ["long", "longer", "longest", "most long"],
-answer: 2
+answer: 2,
+difficulty: 1
 },
 {
 question: "This box is ___ than that one.",
 options: ["heavy", "heavier", "heaviest", "most heavy"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "Mount Everest is the ___ mountain on Earth.",
-options: ["high", "higher", "highset", "highest"],
-answer: 3
+options: ["high", "higher", "highest", "highest"],
+answer: 3,
+difficulty: 1
 },
 {
 question: "My sister is ___ than me.",
 options: ["tall", "taller", "tallest", "most tall"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ movie I've ever seen.",
 options: ["bad", "badder", "baddest", "worst"],
-answer: 3
+answer: 3,
+difficulty: 2
 },
 {
 question: "Winter is ___ than autumn.",
 options: ["cold", "colder", "coldest", "most cold"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ cake I've ever tasted!",
 options: ["good", "better", "best", "goodest"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "Your handwriting is ___ than mine.",
 options: ["neat", "neater", "neatest", "most neat"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "That was the ___ storm we've had this year.",
 options: ["strong", "stronger", "strongest", "most strong"],
-answer: 2
+answer: 2,
+difficulty: 1
 },
 {
 question: "This exercise is ___ than the previous one.",
 options: ["difficult", "difficulter", "more difficult", "most difficult"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "She is the ___ student in our class.",
 options: ["intelligent", "more intelligent", "most intelligent", "intelligenter"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "Today is ___ than yesterday.",
 options: ["sunny", "sunnier", "sunniest", "most sunny"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ painting in the gallery.",
 options: ["valuable", "more valuable", "most valuable", "valuablest"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "My new phone is ___ than my old one.",
 options: ["expensive", "expensiver", "more expensive", "most expensive"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "That was the ___ joke I've ever heard.",
 options: ["funny", "funnier", "funniest", "most funny"],
-answer: 2
+answer: 2,
+difficulty: 1
 },
 {
 question: "The test was ___ than I expected.",
 options: ["hard", "harder", "hardest", "most hard"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ book in the series.",
 options: ["interesting", "more interesting", "most interesting", "interestinger"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "Her dress is ___ than mine.",
 options: ["colorful", "colorfuler", "more colorful", "most colorful"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "That was the ___ decision he could have made.",
 options: ["wise", "wiser", "wisest", "most wise"],
-answer: 2
+answer: 2,
+difficulty: 1
 },
 {
 question: "This road is ___ than the highway.",
 options: ["dangerous", "dangerouser", "more dangerous", "most dangerous"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "He is the ___ runner on the team.",
 options: ["fast", "faster", "fastest", "most fast"],
-answer: 2
+answer: 2,
+difficulty: 1
 },
 {
 question: "This coffee is ___ than the one I had yesterday.",
 options: ["bitter", "bitterer", "more bitter", "most bitter"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "She gave the ___ performance of the night.",
 options: ["impressive", "more impressive", "most impressive", "impressiver"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "My brother is ___ than me at math.",
 options: ["good", "better", "best", "gooder"],
-answer: 1
+answer: 1,
+difficulty: 2
 },
 {
 question: "This is the ___ solution to our problem.",
 options: ["simple", "simpler", "simplest", "most simple"],
-answer: 2
+answer: 2,
+difficulty: 1
 },
 {
 question: "The weather is getting ___ every day.",
 options: ["warm", "warmer", "warmest", "most warm"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "That was the ___ movie I've ever watched.",
 options: ["boring", "boringer", "more boring", "most boring"],
-answer: 3
+answer: 3,
+difficulty: 2
 },
 {
 question: "Her new apartment is ___ than her old one.",
 options: ["spacious", "spaciouser", "more spacious", "most spacious"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "This is the ___ time of the year for tourism.",
 options: ["busy", "busier", "busiest", "most busy"],
-answer: 2
+answer: 2,
+difficulty: 1
 },
 {
 question: "The second exam was ___ than the first one.",
 options: ["easy", "easier", "easiest", "most easy"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "He is the ___ person I know.",
 options: ["kind", "kinder", "kindest", "most kind"],
-answer: 2
+answer: 2,
+difficulty: 1
 },
 {
 question: "This fabric feels ___ than that one.",
 options: ["soft", "softer", "softest", "most soft"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "That was the ___ mistake you could have made.",
 options: ["bad", "worse", "worst", "baddest"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "Her explanation was ___ than his.",
 options: ["clear", "clearer", "clearest", "most clear"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ restaurant in town.",
 options: ["popular", "popularer", "more popular", "most popular"],
-answer: 3
+answer: 3,
+difficulty: 2
 },
 {
 question: "The situation is getting ___ every minute.",
 options: ["serious", "seriouser", "more serious", "most serious"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "That was the ___ concert I've ever attended.",
 options: ["loud", "louder", "loudest", "most loud"],
-answer: 2
+answer: 2,
+difficulty: 1
 },
 {
 question: "Her new job is ___ than her previous one.",
 options: ["stressful", "stressfuller", "more stressful", "most stressful"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "This is the ___ day of my life!",
 options: ["happy", "happier", "happiest", "most happy"],
-answer: 2
+answer: 2,
+difficulty: 1
 },
 {
 question: "The red car is ___ than the blue one.",
 options: ["fast", "faster", "fastest", "most fast"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "That was the ___ meal I've had in years.",
 options: ["delicious", "more delicious", "most delicious", "deliciouser"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "This path is ___ than the main road.",
 options: ["short", "shorter", "shortest", "most short"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "He is the ___ player on the team.",
 options: ["skillful", "more skillful", "most skillful", "skillfuller"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "Your idea is ___ than mine.",
 options: ["creative", "creativer", "more creative", "most creative"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "This is the ___ computer in the store.",
 options: ["powerful", "powerfuler", "more powerful", "most powerful"],
-answer: 3
+answer: 3,
+difficulty: 2
 },
 {
 question: "The nights are getting ___ as winter approaches.",
 options: ["long", "longer", "longest", "most long"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "That was the ___ race I've ever seen.",
 options: ["exciting", "more exciting", "most exciting", "excitinger"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "Her new shoes are ___ than her old ones.",
 options: ["comfortable", "comfortabler", "more comfortable", "most comfortable"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "This is the ___ time to visit the museum.",
 options: ["good", "better", "best", "goodest"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "The second book was ___ than the first.",
 options: ["thick", "thicker", "thickest", "most thick"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "He is the ___ speaker in the conference.",
 options: ["persuasive", "more persuasive", "most persuasive", "persuasiver"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "This solution is ___ than the previous one.",
 options: ["elegant", "eleganter", "more elegant", "most elegant"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "That was the ___ storm in decades.",
 options: ["destructive", "more destructive", "most destructive", "destructiver"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "Her voice is ___ than her sister's.",
 options: ["melodic", "melodicer", "more melodic", "most melodic"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "This is the ___ view from the hotel.",
 options: ["spectacular", "more spectacular", "most spectacular", "spectacularer"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "The new model is ___ than the old one.",
 options: ["efficient", "efficienter", "more efficient", "most efficient"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "That was the ___ performance of the play.",
 options: ["convincing", "more convincing", "most convincing", "convincinger"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "This blanket is ___ than that one.",
 options: ["warm", "warmer", "warmest", "most warm"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "He is the ___ candidate for the job.",
 options: ["qualified", "more qualified", "most qualified", "qualifider"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "The water is getting ___ as you go deeper.",
 options: ["cold", "colder", "coldest", "most cold"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ necklace in the collection.",
 options: ["expensive", "more expensive", "most expensive", "expensiver"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "Her explanation was ___ than the teacher's.",
 options: ["detailed", "detaileder", "more detailed", "most detailed"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "That was the ___ sunset I've ever photographed.",
 options: ["vibrant", "vibranter", "more vibrant", "most vibrant"],
-answer: 3
+answer: 3,
+difficulty: 2
 },
 {
 question: "This route is ___ than the highway.",
 options: ["scenic", "scenicker", "more scenic", "most scenic"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "He is the ___ employee in the company.",
 options: ["dedicated", "more dedicated", "most dedicated", "dedicater"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "The air feels ___ this morning.",
 options: ["fresh", "fresher", "freshest", "most fresh"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ software for graphic design.",
 options: ["advanced", "more advanced", "most advanced", "advanceder"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "Her new painting is ___ than her earlier works.",
 options: ["abstract", "abstracter", "more abstract", "most abstract"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "That was the ___ match of the tournament.",
 options: ["intense", "intenser", "more intense", "most intense"],
-answer: 3
+answer: 3,
+difficulty: 2
 },
 {
 question: "This fabric is ___ than silk.",
 options: ["smooth", "smoother", "smoothest", "most smooth"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "He is the ___ chef in the city.",
 options: ["innovative", "more innovative", "most innovative", "innovativer"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "The instructions are ___ in the new manual.",
 options: ["clear", "clearer", "clearest", "most clear"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ sculpture in the museum.",
 options: ["impressive", "more impressive", "most impressive", "impressiver"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "Her new novel is ___ than her last one.",
 options: ["engaging", "engaginger", "more engaging", "most engaging"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "That was the ___ lecture of the series.",
 options: ["informative", "more informative", "most informative", "informativer"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "This coffee is ___ than the brand I usually drink.",
 options: ["strong", "stronger", "strongest", "most strong"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "He is the ___ student in his class.",
 options: ["diligent", "more diligent", "most diligent", "diligenter"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "The days are getting ___ as summer approaches.",
 options: ["long", "longer", "longest", "most long"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ telescope in the observatory.",
 options: ["powerful", "powerfuler", "more powerful", "most powerful"],
-answer: 3
+answer: 3,
+difficulty: 2
 },
 {
 question: "Her argument was ___ than his.",
 options: ["convincing", "convincinger", "more convincing", "most convincing"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "That was the ___ storm in the region's history.",
 options: ["violent", "violenter", "more violent", "most violent"],
-answer: 3
+answer: 3,
+difficulty: 2
 },
 {
 question: "This material is ___ than plastic.",
 options: ["durable", "durablier", "more durable", "most durable"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "He is the ___ athlete in the competition.",
 options: ["gifted", "gifteder", "more gifted", "most gifted"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "The air is ___ at higher altitudes.",
 options: ["thin", "thinner", "thinnest", "most thin"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ diamond in the collection.",
 options: ["flawless", "flawlesser", "more flawless", "most flawless"],
-answer: 3
+answer: 3,
+difficulty: 2
 },
 {
 question: "Her new design is ___ than the previous version.",
 options: ["sleek", "sleeker", "sleekest", "most sleek"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "That was the ___ performance of her career.",
 options: ["passionate", "passionater", "more passionate", "most passionate"],
-answer: 3
+answer: 3,
+difficulty: 2
 },
 {
 question: "This route is ___ than the alternative.",
 options: ["direct", "directer", "more direct", "most direct"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "He is the ___ musician in the orchestra.",
 options: ["talented", "talentedder", "more talented", "most talented"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "The water is ___ in the morning.",
 options: ["calm", "calmer", "calmest", "most calm"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ telescope available to amateur astronomers.",
 options: ["sophisticated", "more sophisticated", "most sophisticated", "sophisticateder"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "Her interpretation was ___ than the original.",
 options: ["nuanced", "nuanceder", "more nuanced", "most nuanced"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ earthquake in recorded history.",
 options: ["powerful", "powerfuler", "more powerful", "most powerful"],
-answer: 3
+answer: 3,
+difficulty: 2
 },
 {
 question: "This alloy is ___ than pure steel.",
 options: ["resistant", "resistanter", "more resistant", "most resistant"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ negotiator in the company.",
 options: ["shrewd", "shrewder", "more shrewd", "most shrewd"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The sauce is ___ than I remember.",
 options: ["spicy", "spicier", "spiciest", "most spicy"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ violin ever made.",
 options: ["valuable", "more valuable", "most valuable", "valuabler"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "Her new technique is ___ than traditional methods.",
 options: ["effective", "effectiveer", "more effective", "most effective"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "That was the ___ concert of the tour.",
 options: ["energetic", "energeticcer", "more energetic", "most energetic"],
-answer: 3
+answer: 3,
+difficulty: 2
 },
 {
 question: "This fabric is ___ than cotton.",
 options: ["breathable", "breathabler", "more breathable", "most breathable"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ analyst in the firm.",
 options: ["perceptive", "perceptiver", "more perceptive", "most perceptive"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The nights are ___ in December.",
 options: ["long", "longer", "longest", "most long"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ microscope in the laboratory.",
 options: ["precise", "preciser", "more precise", "most precise"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her approach is ___ than conventional methods.",
 options: ["radical", "radicaller", "more radical", "most radical"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ volcanic eruption in centuries.",
 options: ["massive", "massiver", "more massive", "most massive"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This metal is ___ than aluminum.",
 options: ["light", "lighter", "lightest", "most light"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "He is the ___ programmer on the team.",
 options: ["skilled", "skilleder", "more skilled", "most skilled"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "The river is ___ after the rain.",
 options: ["swift", "swifter", "swiftest", "most swift"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ camera for professional photography.",
 options: ["suitable", "suitabler", "more suitable", "most suitable"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her new theory is ___ than previous explanations.",
 options: ["comprehensive", "comprehensiver", "more comprehensive", "most comprehensive"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ hurricane to hit the coast.",
 options: ["destructive", "destructiver", "more destructive", "most destructive"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This ceramic is ___ than porcelain.",
 options: ["fragile", "fragiler", "more fragile", "most fragile"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ debater in the competition.",
 options: ["articulate", "articulater", "more articulate", "most articulate"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The wind is ___ at the mountaintop.",
 options: ["strong", "stronger", "strongest", "most strong"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ telescope lens available.",
 options: ["sharp", "sharper", "sharpest", "most sharp"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "Her solution was ___ than the committee expected.",
 options: ["elegant", "eleganter", "more elegant", "most elegant"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ blizzard in decades.",
 options: ["severe", "severer", "more severe", "most severe"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This polymer is ___ than natural rubber.",
 options: ["elastic", "elasticer", "more elastic", "most elastic"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ mathematician in the department.",
 options: ["brilliant", "brillianter", "more brilliant", "most brilliant"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The current is ___ near the waterfall.",
 options: ["swift", "swifter", "swiftest", "most swift"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ microscope for cellular research.",
 options: ["powerful", "powerfuler", "more powerful", "most powerful"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her hypothesis was ___ than the established theory.",
 options: ["plausible", "plausibler", "more plausible", "most plausible"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ avalanche in the region's history.",
 options: ["deadly", "deadlier", "more deadly", "most deadly"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This synthetic fiber is ___ than wool.",
 options: ["insulating", "insulatinger", "more insulating", "most insulating"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ physicist at the institute.",
 options: ["renowned", "renowner", "more renowned", "most renowned"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The waves are ___ during a storm.",
 options: ["high", "higher", "highest", "most high"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ spectrometer in the lab.",
 options: ["accurate", "accurater", "more accurate", "most accurate"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her methodology is ___ than traditional approaches.",
 options: ["rigorous", "rigorouser", "more rigorous", "most rigorous"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ tornado to strike the area.",
 options: ["devastating", "devastatinger", "more devastating", "most devastating"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This composite material is ___ than steel.",
 options: ["light", "lighter", "lightest", "most light"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "He is the ___ chemist in the research group.",
 options: ["innovative", "innovativer", "more innovative", "most innovative"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The temperature is ___ at the poles.",
 options: ["low", "lower", "lowest", "most low"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ chromatograph available.",
 options: ["sensitive", "sensitivier", "more sensitive", "most sensitive"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her algorithm is ___ than previous versions.",
 options: ["efficient", "efficienter", "more efficient", "most efficient"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ tsunami in recorded history.",
 options: ["destructive", "destructiver", "more destructive", "most destructive"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This nanomaterial is ___ than conventional alternatives.",
 options: ["conductive", "conductiver", "more conductive", "most conductive"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ biologist in the field.",
 options: ["eminent", "eminter", "more eminent", "most eminent"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The pressure is ___ at greater depths.",
 options: ["intense", "intenser", "more intense", "most intense"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ centrifuge in the facility.",
 options: ["powerful", "powerfuler", "more powerful", "most powerful"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her framework is ___ than existing models.",
 options: ["robust", "robuster", "more robust", "most robust"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ solar flare observed.",
 options: ["intense", "intenser", "more intense", "most intense"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This metamaterial is ___ than natural substances.",
 options: ["unusual", "unusualer", "more unusual", "most unusual"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ geologist studying this formation.",
 options: ["knowledgeable", "knowledgeabler", "more knowledgeable", "most knowledgeable"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The gravity is ___ on larger planets.",
 options: ["strong", "stronger", "strongest", "most strong"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ telescope for deep space observation.",
 options: ["capable", "capabler", "more capable", "most capable"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her simulation was ___ than previous attempts.",
 options: ["realistic", "realisticer", "more realistic", "most realistic"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ meteor shower in living memory.",
 options: ["spectacular", "spectacularer", "more spectacular", "most spectacular"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This alloy is ___ than titanium.",
 options: ["resistant", "resistanter", "more resistant", "most resistant"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ astronomer at the observatory.",
 options: ["distinguished", "distinguishered", "more distinguished", "most distinguished"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The radiation is ___ closer to the source.",
 options: ["intense", "intenser", "more intense", "most intense"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ particle detector in the world.",
 options: ["sensitive", "sensitivier", "more sensitive", "most sensitive"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her calculations were ___ than the computer's estimates.",
 options: ["precise", "preciser", "more precise", "most precise"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ cosmic event ever recorded.",
 options: ["energetic", "energeticcer", "more energetic", "most energetic"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This semiconductor is ___ than silicon.",
 options: ["efficient", "efficienter", "more efficient", "most efficient"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ researcher in quantum physics.",
 options: ["prominent", "prominenter", "more prominent", "most prominent"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The magnetic field is ___ near the poles.",
 options: ["strong", "stronger", "strongest", "most strong"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ interferometer available.",
 options: ["accurate", "accurater", "more accurate", "most accurate"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her theorem was ___ than previous formulations.",
 options: ["elegant", "eleganter", "more elegant", "most elegant"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ gamma ray burst detected.",
 options: ["powerful", "powerfuler", "more powerful", "most powerful"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This quantum dot is ___ than traditional phosphors.",
 options: ["bright", "brighter", "brightest", "most bright"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "He is the ___ expert in string theory.",
 options: ["recognized", "recognizeder", "more recognized", "most recognized"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The temperature gradient is ___ at the boundary.",
 options: ["steep", "steeper", "steepest", "most steep"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ mass spectrometer in the lab.",
 options: ["precise", "preciser", "more precise", "most precise"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her model was ___ than earlier simulations.",
 options: ["sophisticated", "sophisticateder", "more sophisticated", "most sophisticated"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ neutrino emission ever observed.",
 options: ["intense", "intenser", "more intense", "most intense"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This nanofiber is ___ than carbon nanotubes.",
 options: ["flexible", "flexibler", "more flexible", "most flexible"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ cosmologist of his generation.",
 options: ["influential", "influentialer", "more influential", "most influential"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The density is ___ in the core.",
 options: ["high", "higher", "highest", "most high"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ cryostat for low-temperature experiments.",
 options: ["stable", "stabler", "more stable", "most stable"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her interpretation was ___ than the textbook explanation.",
 options: ["nuanced", "nuanceder", "more nuanced", "most nuanced"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ gravitational wave detection.",
 options: ["significant", "significanter", "more significant", "most significant"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This superconductor is ___ than previous materials.",
 options: ["efficient", "efficienter", "more efficient", "most efficient"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ authority on dark matter.",
 options: ["respected", "respecteder", "more respected", "most respected"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The voltage is ___ in this circuit.",
 options: ["low", "lower", "lowest", "most low"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ spectrograph for stellar analysis.",
 options: ["detailed", "detaileder", "more detailed", "most detailed"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her analysis was ___ than previous studies.",
 options: ["comprehensive", "comprehensiver", "more comprehensive", "most comprehensive"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ pulsar ever discovered.",
 options: ["rapid", "rapider", "more rapid", "most rapid"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This ceramic is ___ than conventional insulators.",
 options: ["durable", "durablier", "more durable", "most durable"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ paleontologist working on these fossils.",
 options: ["experienced", "experienceder", "more experienced", "most experienced"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The salinity is ___ in this part of the ocean.",
 options: ["high", "higher", "highest", "most high"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ electron microscope at the university.",
 options: ["advanced", "advanceder", "more advanced", "most advanced"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her classification system was ___ than existing taxonomies.",
 options: ["refined", "refineder", "more refined", "most refined"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ black hole ever detected.",
 options: ["massive", "massiver", "more massive", "most massive"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This polymer is ___ than natural fibers.",
 options: ["versatile", "versatiler", "more versatile", "most versatile"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ oceanographer studying these currents.",
 options: ["knowledgeable", "knowledgeabler", "more knowledgeable", "most knowledgeable"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The acidity is ___ in this solution.",
 options: ["low", "lower", "lowest", "most low"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ spectrometer for isotopic analysis.",
 options: ["precise", "preciser", "more precise", "most precise"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her methodology was ___ than standard procedures.",
 options: ["rigorous", "rigorouser", "more rigorous", "most rigorous"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ solar eclipse in centuries.",
 options: ["long", "longer", "longest", "most long"],
-answer: 2
+answer: 2,
+difficulty: 2
 },
 {
 question: "This composite is ___ than traditional materials.",
 options: ["resilient", "resilienter", "more resilient", "most resilient"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ seismologist monitoring this activity.",
 options: ["qualified", "qualifider", "more qualified", "most qualified"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The turbulence is ___ at higher altitudes.",
 options: ["intense", "intenser", "more intense", "most intense"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ telescope for planetary observation.",
 options: ["powerful", "powerfuler", "more powerful", "most powerful"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her predictions were ___ than computer models.",
 options: ["accurate", "accurater", "more accurate", "most accurate"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ aurora display in years.",
 options: ["vivid", "vivider", "more vivid", "most vivid"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This alloy is ___ than pure metals.",
 options: ["stable", "stabler", "more stable", "most stable"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ volcanologist researching this phenomenon.",
 options: ["respected", "respecteder", "more respected", "most respected"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The pressure is ___ in this chamber.",
 options: ["high", "higher", "highest", "most high"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ chromatograph for gas analysis.",
 options: ["sensitive", "sensitivier", "more sensitive", "most sensitive"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her measurements were ___ than previous records.",
 options: ["precise", "preciser", "more precise", "most precise"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ magnetic storm ever measured.",
 options: ["intense", "intenser", "more intense", "most intense"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This coating is ___ than traditional finishes.",
 options: ["protective", "protectiver", "more protective", "most protective"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ geneticist working on this project.",
 options: ["accomplished", "accomplisheder", "more accomplished", "most accomplished"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The concentration is ___ in this solution.",
 options: ["low", "lower", "lowest", "most low"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ detector for subatomic particles.",
 options: ["advanced", "advanceder", "more advanced", "most advanced"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her framework was ___ than conventional theories.",
 options: ["elegant", "eleganter", "more elegant", "most elegant"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ cosmic ray ever observed.",
 options: ["energetic", "energeticcer", "more energetic", "most energetic"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "This nanomaterial is ___ than its predecessors.",
 options: ["conductive", "conductiver", "more conductive", "most conductive"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "He is the ___ astrophysicist studying these phenomena.",
 options: ["distinguished", "distinguishered", "more distinguished", "most distinguished"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "The radiation is ___ near the source.",
 options: ["intense", "intenser", "more intense", "most intense"],
-answer: 1
+answer: 1,
+difficulty: 1
 },
 {
 question: "This is the ___ interferometer for gravitational wave detection.",
 options: ["sensitive", "sensitivier", "more sensitive", "most sensitive"],
-answer: 3
+answer: 3,
+difficulty: 3
 },
 {
 question: "Her calculations were ___ than previous estimates.",
 options: ["refined", "refineder", "more refined", "most refined"],
-answer: 2
+answer: 2,
+difficulty: 3
 },
 {
 question: "That was the ___ supernova in recorded history.",
 options: ["bright", "brighter", "brightest", "most bright"],
-answer: 2
+answer: 2,
+difficulty: 2
 }
+];
+// Achievements data
+const achievements = [
+{
+id: "first_blood",
+title: "First Blood",
+description: "Answer your first question correctly",
+icon: "fas fa-tint",
+unlocked: false
+},
+{
+id: "streak_5",
+title: "Hot Streak",
+description: "Get 5 correct answers in a row",
+icon: "fas fa-fire",
+unlocked: false
+},
+{
+id: "streak_10",
+title: "On Fire",
+description: "Get 10 correct answers in a row",
+icon: "fas fa-burn",
+unlocked: false
+},
+{
+id: "quick_thinker",
+title: "Quick Thinker",
+description: "Answer 5 questions with more than 10 seconds remaining",
+icon: "fas fa-bolt",
+unlocked: false
+},
+{
+id: "halfway",
+title: "Halfway There",
+description: "Complete 100 questions",
+icon: "fas fa-flag",
+unlocked: false
+},
+{
+id: "perfectionist",
+title: "Perfectionist",
+description: "Get 20 perfect answers in a row",
+icon: "fas fa-star",
+unlocked: false
+},
+{
+id: "speed_demon",
+title: "Speed Demon",
+description: "Answer 10 questions in under 5 seconds each",
+icon: "fas fa-stopwatch",
+unlocked: false
+},
+{
+id: "grammar_guru",
+title: "Grammar Guru",
+description: "Answer all difficulty 3 questions correctly",
+icon: "fas fa-graduation-cap",
+unlocked: false
+},
+{
+id: "completionist",
+title: "Completionist",
+description: "Finish all 200 questions",
+icon: "fas fa-trophy",
+unlocked: false
+},
+{
+id: "high_roller",
+title: "High Roller",
+description: "Score over 150 points",
+icon: "fas fa-coins",
+unlocked: false
+}
+];
+// Rank thresholds
+const ranks = [
+{ name: "Novice", threshold: 0 },
+{ name: "Apprentice", threshold: 20 },
+{ name: "Adept", threshold: 50 },
+{ name: "Expert", threshold: 100 },
+{ name: "Master", threshold: 170 }
 ];
 // Game variables
 let currentQuestion = 0;
 let score = 0;
 let selectedOption = null;
+let timer;
+let timeLeft = 15;
+let streak = 0;
+let correctAnswers = 0;
+let quickAnswers = 0;
+let perfectAnswers = 0;
+let highDifficultyCorrect = 0;
+let answeredQuestions = [];
+let achievementsUnlocked = [];
 // DOM elements
 const questionElement = document.getElementById('question');
 const optionsElement = document.getElementById('options');
@@ -1305,12 +2063,32 @@ const gameOverScreen = document.getElementById('game-over');
 const finalScoreElement = document.getElementById('final-score');
 const performanceMessageElement = document.getElementById('performance-message');
 const restartButton = document.getElementById('restart-btn');
+const timerElement = document.getElementById('timer');
+const timeProgressElement = document.getElementById('time-progress');
+const streakCounter = document.getElementById('streak-counter');
+const streakCountElement = document.getElementById('streak-count');
+const currentRankElement = document.getElementById('current-rank');
+const rankProgressElement = document.getElementById('rank-progress');
+const achievementGrid = document.getElementById('achievement-grid');
+const finalRankElement = document.getElementById('final-rank');
 // Initialize the game
 function initGame() {
 currentQuestion = 0;
 score = 0;
+streak = 0;
+correctAnswers = 0;
+quickAnswers = 0;
+perfectAnswers = 0;
+highDifficultyCorrect = 0;
+answeredQuestions = [];
+achievementsUnlocked = [];
+
+// Reset achievements
+achievements.forEach(ach => ach.unlocked = false);
+
 updateScore();
 showQuestion();
+renderAchievements();
 }
 // Show current question
 function showQuestion() {
@@ -1318,6 +2096,11 @@ if (currentQuestion >= questions.length) {
 endGame();
 return;
 }
+// Reset timer
+clearInterval(timer);
+timeLeft = 15;
+updateTimerDisplay();
+
 const question = questions[currentQuestion];
 questionElement.textContent = question.question;
 optionsElement.innerHTML = '';
@@ -1332,15 +2115,65 @@ optionsElement.appendChild(button);
 currentQuestionElement.textContent = currentQuestion + 1;
 progressElement.style.width = `${(currentQuestion / questions.length) * 100}%`;
 
-feedbackElement.className = 'feedback hidden';
+feedbackElement.className = 'feedback';
+feedbackElement.textContent = '';
 nextButton.className = 'next-btn hidden';
+
+// Start timer
+timer = setInterval(updateTimer, 1000);
+}
+// Update timer
+function updateTimer() {
+timeLeft--;
+updateTimerDisplay();
+
+if (timeLeft <= 0) {
+clearInterval(timer);
+timeOut();
+}
+}
+// Update timer display
+function updateTimerDisplay() {
+timerElement.textContent = timeLeft + 's';
+timeProgressElement.style.width = `${(timeLeft / 15) * 100}%`;
+
+// Change color based on time left
+if (timeLeft <= 5) {
+timeProgressElement.style.background = 'linear-gradient(to right, var(--warning), var(--danger))';
+} else if (timeLeft <= 10) {
+timeProgressElement.style.background = 'linear-gradient(to right, var(--primary), var(--warning))';
+} else {
+timeProgressElement.style.background = 'linear-gradient(to right, var(--primary), var(--secondary))';
+}
+}
+// Handle time out
+function timeOut() {
+const options = document.querySelectorAll('.option');
+const correctIndex = questions[currentQuestion].answer;
+
+options.forEach((option, i) => {
+option.disabled = true;
+if (i === correctIndex) {
+option.classList.add('correct');
+}
+});
+feedbackElement.textContent = 'Time\'s up! The correct answer is: ' + questions[currentQuestion].options[correctIndex];
+feedbackElement.className = 'feedback incorrect-feedback show';
+nextButton.className = 'next-btn';
+
+// Reset streak
+streak = 0;
+updateStreakCounter();
 }
 // Handle option selection
 function selectOption(index) {
-if (feedbackElement.classList.contains('hidden')) {
+if (feedbackElement.classList.contains('show')) return;
+
+clearInterval(timer);
 selectedOption = index;
 const options = document.querySelectorAll('.option');
 const correctIndex = questions[currentQuestion].answer;
+const question = questions[currentQuestion];
 
 options.forEach((option, i) => {
 option.disabled = true;
@@ -1350,21 +2183,228 @@ option.classList.add('correct');
 option.classList.add('incorrect');
 }
 });
+// Calculate time bonus (1 point per second remaining, max 10)
+const timeBonus = Math.min(10, timeLeft);
+let pointsEarned = 1;
+let bonusMessage = '';
+
 if (index === correctIndex) {
-score++;
-updateScore();
-feedbackElement.textContent = 'Correct! Well done!';
-feedbackElement.className = 'feedback correct-feedback';
-} else {
-feedbackElement.textContent = `Incorrect. The correct answer is: ${questions[currentQuestion].options[correctIndex]}`;
-feedbackElement.className = 'feedback incorrect-feedback';
+// Base points based on difficulty
+pointsEarned = question.difficulty;
+
+// Add time bonus
+if (timeLeft > 5) {
+pointsEarned += timeBonus;
+bonusMessage = ` +${timeBonus} time bonus!`;
 }
+
+score += pointsEarned;
+correctAnswers++;
+streak++;
+
+// Check for perfect answer (answered quickly)
+if (timeLeft >= 10) {
+perfectAnswers++;
+}
+
+// Check for quick answer
+if (timeLeft > 10) {
+quickAnswers++;
+}
+
+// Track high difficulty correct answers
+if (question.difficulty === 3) {
+highDifficultyCorrect++;
+}
+
+updateScore();
+feedbackElement.textContent = `Correct! ${pointsEarned} point${pointsEarned !== 1 ? 's' : ''} earned${bonusMessage}`;
+feedbackElement.className = 'feedback correct-feedback show';
+
+// Show bonus points animation if applicable
+if (timeBonus > 0) {
+showBonusPoints(timeBonus);
+}
+
+// Check for achievements
+checkAchievements();
+} else {
+feedbackElement.textContent = `Incorrect. The correct answer is: ${question.options[correctIndex]}`;
+feedbackElement.className = 'feedback incorrect-feedback show';
+streak = 0;
+}
+
 nextButton.className = 'next-btn';
+updateStreakCounter();
+
+// Store answered question
+answeredQuestions.push({
+question: question.question,
+correct: index === correctIndex,
+timeLeft: timeLeft
+});
+}
+// Show bonus points animation
+function showBonusPoints(points) {
+const bonusElement = document.createElement('div');
+bonusElement.className = 'bonus-points';
+bonusElement.textContent = `+${points} Bonus!`;
+document.body.appendChild(bonusElement);
+
+setTimeout(() => {
+bonusElement.remove();
+}, 2000);
+}
+// Update streak counter
+function updateStreakCounter() {
+streakCountElement.textContent = streak;
+
+if (streak >= 3) {
+streakCounter.classList.add('show');
+} else {
+streakCounter.classList.remove('show');
+}
+
+// Change color based on streak length
+if (streak >= 10) {
+streakCounter.style.backgroundColor = 'var(--danger)';
+} else if (streak >= 5) {
+streakCounter.style.backgroundColor = 'var(--warning)';
+} else {
+streakCounter.style.backgroundColor = 'var(--primary)';
 }
 }
 // Update score display
 function updateScore() {
 scoreElement.textContent = score;
+updateRank();
+}
+// Update player rank
+function updateRank() {
+let currentRank = ranks[0];
+let nextRank = ranks[1];
+
+for (let i = ranks.length - 1; i >= 0; i--) {
+if (score >= ranks[i].threshold) {
+currentRank = ranks[i];
+nextRank = i < ranks.length - 1 ? ranks[i + 1] : null;
+break;
+}
+}
+
+currentRankElement.textContent = currentRank.name;
+
+// Update rank progress
+if (nextRank) {
+const progress = ((score - currentRank.threshold) / (nextRank.threshold - currentRank.threshold)) * 100;
+rankProgressElement.style.width = `${progress}%`;
+} else {
+rankProgressElement.style.width = '100%';
+}
+
+// Highlight active rank
+document.querySelectorAll('.rank-item').forEach(item => {
+if (item.dataset.rank === currentRank.name) {
+item.classList.add('active');
+} else {
+item.classList.remove('active');
+}
+});
+
+return currentRank;
+}
+// Check for achievements
+function checkAchievements() {
+// First Blood
+if (correctAnswers === 1 && !achievements[0].unlocked) {
+unlockAchievement("first_blood");
+}
+
+// Streak achievements
+if (streak === 5 && !achievements[1].unlocked) {
+unlockAchievement("streak_5");
+}
+
+if (streak === 10 && !achievements[2].unlocked) {
+unlockAchievement("streak_10");
+}
+
+// Quick Thinker
+if (quickAnswers >= 5 && !achievements[3].unlocked) {
+unlockAchievement("quick_thinker");
+}
+
+// Halfway
+if (currentQuestion >= 99 && !achievements[4].unlocked) {
+unlockAchievement("halfway");
+}
+
+// Perfectionist
+if (perfectAnswers >= 20 && !achievements[5].unlocked) {
+unlockAchievement("perfectionist");
+}
+
+// Speed Demon (tracked separately)
+
+// Grammar Guru
+if (highDifficultyCorrect >= questions.filter(q => q.difficulty === 3).length && !achievements[7].unlocked) {
+unlockAchievement("grammar_guru");
+}
+}
+// Unlock an achievement
+function unlockAchievement(id) {
+const achievement = achievements.find(ach => ach.id === id);
+if (achievement && !achievement.unlocked) {
+achievement.unlocked = true;
+achievementsUnlocked.push(achievement);
+
+// Show notification
+showAchievementNotification(achievement);
+
+// Update achievements display
+renderAchievements();
+}
+}
+// Show achievement notification
+function showAchievementNotification(achievement) {
+const notification = document.createElement('div');
+notification.className = 'achievement-notification';
+notification.innerHTML = `
+<div class="achievement-icon"><i class="${achievement.icon}"></i></div>
+<div>
+<div class="achievement-title">Achievement Unlocked!</div>
+<div class="achievement-name">${achievement.title}</div>
+<div class="achievement-desc">${achievement.description}</div>
+</div>
+`;
+
+document.body.appendChild(notification);
+
+setTimeout(() => {
+notification.classList.add('show');
+}, 100);
+
+setTimeout(() => {
+notification.classList.remove('show');
+setTimeout(() => {
+notification.remove();
+}, 500);
+}, 3000);
+}
+// Render achievements
+function renderAchievements() {
+achievementGrid.innerHTML = '';
+
+achievements.forEach(achievement => {
+const achievementElement = document.createElement('div');
+achievementElement.className = `achievement ${achievement.unlocked ? 'unlocked' : 'locked'}`;
+achievementElement.innerHTML = `
+<div class="achievement-icon"><i class="${achievement.icon}"></i></div>
+<div class="achievement-title">${achievement.title}</div>
+<div class="achievement-desc">${achievement.description}</div>
+`;
+achievementGrid.appendChild(achievementElement);
+});
 }
 // Move to next question
 function nextQuestion() {
@@ -1377,7 +2417,24 @@ gameArea.className = 'game-area hidden';
 gameOverScreen.className = 'game-over';
 finalScoreElement.textContent = score;
 
-const percentage = (score / questions.length) * 100;
+// Determine final rank
+const finalRank = updateRank();
+finalRankElement.textContent = finalRank.name;
+
+// Add special class based on rank
+finalRankElement.className = 'final-rank';
+if (finalRank.name === "Master") {
+finalRankElement.style.backgroundColor = "#ffd700";
+finalRankElement.style.color = "#856404";
+} else if (finalRank.name === "Expert") {
+finalRankElement.style.backgroundColor = "#c0c0c0";
+finalRankElement.style.color = "#495057";
+} else if (finalRank.name === "Adept") {
+finalRankElement.style.backgroundColor = "#cd7f32";
+finalRankElement.style.color = "#fff";
+}
+
+const percentage = (correctAnswers / questions.length) * 100;
 let message = '';
 
 if (percentage >= 90) {
@@ -1391,6 +2448,58 @@ message = 'Keep practicing! Review the rules for comparative and superlative adj
 }
 
 performanceMessageElement.textContent = message;
+
+// Create confetti for good scores
+if (percentage >= 70) {
+createConfetti();
+}
+
+// Check for completionist achievement
+if (!achievements[8].unlocked) {
+unlockAchievement("completionist");
+}
+
+// Check for high roller achievement
+if (score >= 150 && !achievements[9].unlocked) {
+unlockAchievement("high_roller");
+}
+
+// Check for speed demon achievement
+const quickAnswersCount = answeredQuestions.filter(q => q.timeLeft > 10).length;
+if (quickAnswersCount >= 10 && !achievements[6].unlocked) {
+unlockAchievement("speed_demon");
+}
+}
+// Create confetti effect
+function createConfetti() {
+for (let i = 0; i < 100; i++) {
+const confetti = document.createElement('div');
+confetti.className = 'confetti';
+
+// Random color
+const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
+const randomColor = colors[Math.floor(Math.random() * colors.length)];
+confetti.style.backgroundColor = randomColor;
+
+// Random position
+confetti.style.left = Math.random() * 100 + '%';
+
+// Random size
+const size = Math.random() * 10 + 5;
+confetti.style.width = size + 'px';
+confetti.style.height = size + 'px';
+
+// Random animation duration
+const duration = Math.random() * 3 + 2;
+confetti.style.animationDuration = duration + 's';
+
+document.body.appendChild(confetti);
+
+// Remove confetti after animation
+setTimeout(() => {
+confetti.remove();
+}, duration * 1000);
+}
 }
 // Restart the game
 function restartGame() {
